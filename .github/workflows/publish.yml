@@ -6,14 +6,15 @@ on:
 
 jobs:
   publish:
+    # Skip version-bump commits to avoid infinite loop
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: oven-sh/setup-bun@v2
 
@@ -27,21 +28,46 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Bump version
+      - name: Bump version on branch
         id: version
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          npm version patch -m "v%s"
-          echo "tag=v$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
-          git push
-          git push --tags
+          npm version patch --no-git-tag-version
+          VERSION=$(node -p 'require("./package.json").version')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          BRANCH="version-bump/v$VERSION"
+          git checkout -b "$BRANCH"
+          git add package.json
+          git commit -m "v$VERSION"
+          git push origin "$BRANCH"
 
-      - name: Publish to npm
-        run: npm publish --access public --provenance
-
-      - name: Create GitHub Release
-        run: gh release create "$TAG" --generate-notes
+      - name: Create and merge PR
+        id: pr
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PR_URL=$(gh pr create \
+            --base main \
+            --head "version-bump/v$VERSION" \
+            --title "v$VERSION" \
+            --body "Automated version bump to v$VERSION")
+          echo "url=$PR_URL" >> "$GITHUB_OUTPUT"
+          gh pr merge "$PR_URL" --squash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ steps.version.outputs.tag }}
+
+      - name: Tag and publish
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git checkout main
+          git pull
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        run: gh release create "v${{ steps.version.outputs.version }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
