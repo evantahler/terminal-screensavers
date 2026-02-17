@@ -1,6 +1,6 @@
 {
   "name": "terminal-screensavers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Beautiful terminal screensavers — run with npx terminal-screensavers",
   "type": "module",
   "bin": {
@@ -13,9 +13,17 @@
     "lint": "biome check src/",
     "format": "biome check --write src/"
   },
-  "keywords": ["terminal", "screensaver", "cli", "ink", "react"],
+  "keywords": [
+    "terminal",
+    "screensaver",
+    "cli",
+    "ink",
+    "react"
+  ],
   "license": "MIT",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "ink": "^6.0.0",
     "meow": "^14.0.0",
