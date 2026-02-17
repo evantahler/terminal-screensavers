@@ -6,12 +6,9 @@ on:
 
 jobs:
   publish:
-    # Skip version-bump commits to avoid infinite loop
-    if: github.event.head_commit.author.name != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -25,51 +22,28 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      - name: Check if version is already published
+        id: check
+        run: |
+          LOCAL=$(node -p 'require("./package.json").version')
+          echo "version=$LOCAL" >> "$GITHUB_OUTPUT"
+          PUBLISHED=$(npm view terminal-screensavers version 2>/dev/null || echo "0.0.0")
+          if [ "$LOCAL" = "$PUBLISHED" ]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build
+        if: steps.check.outputs.published == 'false'
         run: bun run build
 
-      - name: Bump version on branch
-        id: version
+      - name: Tag and publish
+        if: steps.check.outputs.published == 'false'
         run: |
+          VERSION="${{ steps.check.outputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          npm version patch --no-git-tag-version
-          VERSION=$(node -p 'require("./package.json").version')
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          BRANCH="version-bump/v$VERSION"
-          git checkout -b "$BRANCH"
-          git add package.json
-          git commit -m "v$VERSION"
-          git push origin "$BRANCH"
-
-      - name: Create and merge PR
-        id: pr
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          PR_URL=$(gh pr create \
-            --base main \
-            --head "version-bump/v$VERSION" \
-            --title "v$VERSION" \
-            --body "Automated version bump to v$VERSION")
-          echo "url=$PR_URL" >> "$GITHUB_OUTPUT"
-          # Wait for CI checks to be registered before watching
-          for i in $(seq 1 30); do
-            if gh pr checks "$PR_URL" 2>&1 | grep -q "no checks"; then
-              sleep 10
-            else
-              break
-            fi
-          done
-          gh pr checks "$PR_URL" --watch --fail-fast
-          gh pr merge "$PR_URL" --squash --delete-branch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Tag and publish
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          git checkout main
-          git pull
           git tag "v$VERSION"
           git push origin "v$VERSION"
           npm publish --access public --provenance
@@ -77,6 +51,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        run: gh release create "v${{ steps.version.outputs.version }}" --generate-notes
+        if: steps.check.outputs.published == 'false'
+        run: gh release create "v${{ steps.check.outputs.version }}" --generate-notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -24,3 +24,11 @@
 1. Create `src/screensavers/<name>.tsx` exporting a `ScreensaverModule`
 2. Re-export from `src/screensavers/index.ts`
 3. Add to the array in `src/registry.ts`
+
+## Versioning — IMPORTANT
+
+**Every PR must include a version bump in `package.json`.** The publish workflow automatically publishes to npm whenever `main` has a version that isn't yet on the registry. If you don't bump the version, your changes won't be published.
+
+- Bug fixes / minor changes → patch bump (e.g., `0.1.0` → `0.1.1`)
+- New screensavers / features → minor bump (e.g., `0.1.0` → `0.2.0`)
+- Breaking changes → major bump (e.g., `0.1.0` → `1.0.0`)
