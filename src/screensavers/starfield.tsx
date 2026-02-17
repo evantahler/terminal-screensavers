@@ -1,5 +1,6 @@
 import { Box, Text } from "ink";
-import React, { useRef } from "react";
+import type React from "react";
+import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
 
 interface Star {
@@ -68,26 +69,37 @@ function Starfield({ columns, rows }: ScreensaverProps) {
   }
 
   const lines = grid.map((row, y) => {
-    const chars = row.map((ch, x) => {
-      if (ch === " ") return ch;
-      const b = brightness[y][x];
-      const color =
-        b === 3
-          ? "white"
-          : b === 2
-            ? "#cccccc"
-            : b === 1
-              ? "#888888"
-              : "#555555";
-      return (
-        <Text key={x} color={color} bold={b === 3}>
-          {ch}
-        </Text>
-      );
-    });
+    // Build row as segments: consecutive spaces grouped, colored chars individual
+    const segments: React.ReactNode[] = [];
+    let spaces = "";
+    for (let x = 0; x < row.length; x++) {
+      if (row[x] === " ") {
+        spaces += " ";
+      } else {
+        if (spaces) {
+          segments.push(spaces);
+          spaces = "";
+        }
+        const b = brightness[y][x];
+        const color =
+          b === 3
+            ? "white"
+            : b === 2
+              ? "#cccccc"
+              : b === 1
+                ? "#888888"
+                : "#555555";
+        segments.push(
+          <Text key={x} color={color} bold={b === 3}>
+            {row[x]}
+          </Text>,
+        );
+      }
+    }
+    if (spaces) segments.push(spaces);
     return (
       <Box key={y}>
-        <Text>{chars}</Text>
+        <Text>{segments}</Text>
       </Box>
     );
   });

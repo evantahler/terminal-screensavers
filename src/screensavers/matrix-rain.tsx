@@ -19,7 +19,7 @@ interface Drop {
   chars: string[];
 }
 
-function MatrixRain({ columns, rows, frame }: ScreensaverProps) {
+function MatrixRain({ columns, rows }: ScreensaverProps) {
   const dropsRef = useRef<Map<number, Drop>>(new Map());
   const drops = dropsRef.current;
 
@@ -46,7 +46,7 @@ function MatrixRain({ columns, rows, frame }: ScreensaverProps) {
     for (let x = 0; x < columns; x++) {
       const drop = drops.get(x);
       if (!drop) {
-        chars.push(" ");
+        chars.push(<Text key={x}> </Text>);
         continue;
       }
 
@@ -54,9 +54,8 @@ function MatrixRain({ columns, rows, frame }: ScreensaverProps) {
       const dist = headY - y;
 
       if (dist < 0 || dist >= drop.length) {
-        chars.push(" ");
+        chars.push(<Text key={x}> </Text>);
       } else if (dist === 0) {
-        // Head of the drop — bright white
         chars.push(
           <Text key={x} color="white" bold>
             {drop.chars[y % drop.chars.length]}
@@ -78,17 +77,12 @@ function MatrixRain({ columns, rows, frame }: ScreensaverProps) {
         );
       }
     }
-    lines.push(
-      <Box key={y}>
-        <Text>{chars}</Text>
-      </Box>,
-    );
+    lines.push(<Box key={y}>{chars}</Box>);
   }
 
   // Advance drops
-  for (const [x, drop] of drops) {
+  for (const [, drop] of drops) {
     drop.y += drop.speed;
-    // Randomly mutate some chars
     if (Math.random() < 0.1) {
       const idx = Math.floor(Math.random() * drop.chars.length);
       drop.chars[idx] = randomChar();

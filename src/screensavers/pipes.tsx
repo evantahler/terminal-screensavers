@@ -1,5 +1,6 @@
 import { Box, Text } from "ink";
-import React, { useRef } from "react";
+import type React from "react";
+import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
 
 // Box-drawing characters for pipe directions
@@ -102,17 +103,28 @@ function Pipes({ columns, rows }: ScreensaverProps) {
   }
 
   const lines = grid.map((row, y) => {
-    const chars = row.map((cell, x) => {
-      if (!cell) return " ";
-      return (
-        <Text key={x} color={cell.color}>
-          {cell.char}
-        </Text>
-      );
-    });
+    const segments: React.ReactNode[] = [];
+    let spaces = "";
+    for (let x = 0; x < row.length; x++) {
+      const cell = row[x];
+      if (!cell) {
+        spaces += " ";
+      } else {
+        if (spaces) {
+          segments.push(spaces);
+          spaces = "";
+        }
+        segments.push(
+          <Text key={x} color={cell.color}>
+            {cell.char}
+          </Text>,
+        );
+      }
+    }
+    if (spaces) segments.push(spaces);
     return (
       <Box key={y}>
-        <Text>{chars}</Text>
+        <Text>{segments}</Text>
       </Box>
     );
   });
