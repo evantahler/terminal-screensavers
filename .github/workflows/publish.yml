@@ -52,6 +52,14 @@ jobs:
             --title "v$VERSION" \
             --body "Automated version bump to v$VERSION")
           echo "url=$PR_URL" >> "$GITHUB_OUTPUT"
+          # Wait for CI checks to be registered before watching
+          for i in $(seq 1 30); do
+            if gh pr checks "$PR_URL" 2>&1 | grep -q "no checks"; then
+              sleep 10
+            else
+              break
+            fi
+          done
           gh pr checks "$PR_URL" --watch --fail-fast
           gh pr merge "$PR_URL" --squash --delete-branch
         env:
