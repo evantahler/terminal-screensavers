@@ -52,7 +52,8 @@ jobs:
             --title "v$VERSION" \
             --body "Automated version bump to v$VERSION")
           echo "url=$PR_URL" >> "$GITHUB_OUTPUT"
-          gh pr merge "$PR_URL" --squash
+          gh pr checks "$PR_URL" --watch --fail-fast
+          gh pr merge "$PR_URL" --squash --delete-branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
