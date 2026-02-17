@@ -15,6 +15,7 @@
   },
   "keywords": ["terminal", "screensaver", "cli", "ink", "react"],
   "license": "MIT",
+  "files": ["dist"],
   "dependencies": {
     "ink": "^6.0.0",
     "meow": "^14.0.0",
