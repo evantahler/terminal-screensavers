@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - run: bun install --frozen-lockfile
@@ -38,7 +38,7 @@ jobs:
         if: steps.check.outputs.published == 'false'
         run: bun run build
 
-      - name: Tag and publish
+      - name: Tag release
         if: steps.check.outputs.published == 'false'
         run: |
           VERSION="${{ steps.check.outputs.version }}"
@@ -46,9 +46,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag "v$VERSION" 2>/dev/null || true
           git push origin "v$VERSION" --force
-          npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        if: steps.check.outputs.published == 'false'
+        run: npm publish --access public --provenance
 
       - name: Create GitHub Release
         if: steps.check.outputs.published == 'false'
