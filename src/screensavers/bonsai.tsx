@@ -107,7 +107,9 @@ const Bonsai: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
         color = char === "&" ? "#228B22" : "#FF69B4";
       }
 
-      grid[newY][newX] = { char, color };
+      if (grid[newY]) {
+        grid[newY][newX] = { char, color };
+      }
 
       // Update branch
       const newLife = branch.life - 1;
@@ -192,22 +194,26 @@ const Bonsai: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   const potWidth = 8;
   const potStart = potCenterX - Math.floor(potWidth / 2);
 
+  const setCell = (y: number, x: number, char: string, color: string) => {
+    if (y >= 0 && y < grid.length && x >= 0 && x < columns) {
+      grid[y][x] = { char, color };
+    }
+  };
+
   for (let i = 0; i < potWidth; i++) {
     const x = potStart + i;
-    if (x >= 0 && x < columns) {
-      if (i === 0) {
-        grid[potY][x] = { char: "╔", color: "#8B4513" };
-        grid[potY + 1][x] = { char: "║", color: "#8B4513" };
-        grid[potY + 2][x] = { char: "╚", color: "#8B4513" };
-      } else if (i === potWidth - 1) {
-        grid[potY][x] = { char: "╗", color: "#8B4513" };
-        grid[potY + 1][x] = { char: "║", color: "#8B4513" };
-        grid[potY + 2][x] = { char: "╝", color: "#8B4513" };
-      } else {
-        grid[potY][x] = { char: "═", color: "#8B4513" };
-        grid[potY + 1][x] = { char: " ", color: "#8B4513" };
-        grid[potY + 2][x] = { char: "═", color: "#8B4513" };
-      }
+    if (i === 0) {
+      setCell(potY, x, "╔", "#8B4513");
+      setCell(potY + 1, x, "║", "#8B4513");
+      setCell(potY + 2, x, "╚", "#8B4513");
+    } else if (i === potWidth - 1) {
+      setCell(potY, x, "╗", "#8B4513");
+      setCell(potY + 1, x, "║", "#8B4513");
+      setCell(potY + 2, x, "╝", "#8B4513");
+    } else {
+      setCell(potY, x, "═", "#8B4513");
+      setCell(potY + 1, x, " ", "#8B4513");
+      setCell(potY + 2, x, "═", "#8B4513");
     }
   }
 
