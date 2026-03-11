@@ -12,7 +12,8 @@
     "build": "tsc && chmod +x dist/cli.js",
     "lint": "biome check src/",
     "format": "biome check --write src/",
-    "test": "bun test"
+    "test": "bun test",
+    "screenshots": "bash scripts/capture-screenshots.sh"
   },
   "keywords": ["terminal", "screensaver", "cli", "ink", "react"],
   "repository": {
