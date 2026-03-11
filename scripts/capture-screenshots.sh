@@ -104,7 +104,7 @@ SWIFT
   )
 
   # Open a new Ghostty window running the screensaver
-  open -na Ghostty.app --args -e "cd '$PROJECT_DIR' && bun run dev $name"
+  open -na Ghostty.app --args -e /bin/bash -c "cd '$PROJECT_DIR' && bun run dev $name"
 
   echo "  waiting ${DELAY}s for render..."
   sleep "$DELAY"
@@ -170,8 +170,12 @@ SWIFT
     fi
   fi
 
-  # Close the Ghostty window we opened
-  osascript -e 'tell application "Ghostty" to close front window' 2>/dev/null || true
+  # Close the Ghostty window — send a keystroke to exit the screensaver, then close
+  osascript -e 'tell application "Ghostty" to activate' \
+            -e 'delay 0.5' \
+            -e 'tell application "System Events" to keystroke " "' \
+            -e 'delay 1' \
+            -e 'tell application "Ghostty" to close front window' 2>/dev/null || true
   sleep 2
 done
 
