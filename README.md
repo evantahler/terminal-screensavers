@@ -18,20 +18,20 @@ Press any key to exit.
 
 | Name | Screenshot | Description | FPS |
 |---|---|---|---|
-| `aquarium` | ![aquarium](screenshots/aquarium.png) | Fish, bubbles, and seaweed in an ASCII aquarium | 6 |
-| `bonsai` | ![bonsai](screenshots/bonsai.png) | Procedurally growing bonsai tree | 6 |
-| `bouncing-logo` | ![bouncing-logo](screenshots/bouncing-logo.png) | DVD-style bouncing text block with color changes | 15 |
-| `digital-clock` | ![digital-clock](screenshots/digital-clock.png) | Large bouncing digital clock display | 10 |
-| `dna-helix` | ![dna-helix](screenshots/dna-helix.png) | Rotating DNA double helix animation | 12 |
-| `fire` | ![fire](screenshots/fire.png) | ASCII fire rising from the bottom of the screen | 15 |
-| `fireworks` | ![fireworks](screenshots/fireworks.png) | Colorful firework rockets and explosions | 15 |
-| `game-of-life` | ![game-of-life](screenshots/game-of-life.png) | Conway's Game of Life cellular automaton | 8 |
-| `lava-lamp` | ![lava-lamp](screenshots/lava-lamp.png) | Colorful metaball lava lamp blobs | 10 |
-| `matrix-rain` | ![matrix-rain](screenshots/matrix-rain.png) | Falling green katakana and latin characters | 12 |
-| `maze` | ![maze](screenshots/maze.png) | Animated maze generation and solving | 15 |
-| `mystify` | ![mystify](screenshots/mystify.png) | Bouncing geometric shapes like the Windows classic | 15 |
-| `pipes` | ![pipes](screenshots/pipes.png) | Random pipe segments with box-drawing characters | 15 |
-| `starfield` | ![starfield](screenshots/starfield.png) | 3D stars flying toward the viewer | 20 |
+| `aquarium` | <img src="screenshots/aquarium.png" alt="aquarium" width="150"> | Fish, bubbles, and seaweed in an ASCII aquarium | 6 |
+| `bonsai` | <img src="screenshots/bonsai.png" alt="bonsai" width="150"> | Procedurally growing bonsai tree | 6 |
+| `bouncing-logo` | <img src="screenshots/bouncing-logo.png" alt="bouncing-logo" width="150"> | DVD-style bouncing text block with color changes | 15 |
+| `digital-clock` | <img src="screenshots/digital-clock.png" alt="digital-clock" width="150"> | Large bouncing digital clock display | 10 |
+| `dna-helix` | <img src="screenshots/dna-helix.png" alt="dna-helix" width="150"> | Rotating DNA double helix animation | 12 |
+| `fire` | <img src="screenshots/fire.png" alt="fire" width="150"> | ASCII fire rising from the bottom of the screen | 15 |
+| `fireworks` | <img src="screenshots/fireworks.png" alt="fireworks" width="150"> | Colorful firework rockets and explosions | 15 |
+| `game-of-life` | <img src="screenshots/game-of-life.png" alt="game-of-life" width="150"> | Conway's Game of Life cellular automaton | 8 |
+| `lava-lamp` | <img src="screenshots/lava-lamp.png" alt="lava-lamp" width="150"> | Colorful metaball lava lamp blobs | 10 |
+| `matrix-rain` | <img src="screenshots/matrix-rain.png" alt="matrix-rain" width="150"> | Falling green katakana and latin characters | 12 |
+| `maze` | <img src="screenshots/maze.png" alt="maze" width="150"> | Animated maze generation and solving | 15 |
+| `mystify` | <img src="screenshots/mystify.png" alt="mystify" width="150"> | Bouncing geometric shapes like the Windows classic | 15 |
+| `pipes` | <img src="screenshots/pipes.png" alt="pipes" width="150"> | Random pipe segments with box-drawing characters | 15 |
+| `starfield` | <img src="screenshots/starfield.png" alt="starfield" width="150"> | 3D stars flying toward the viewer | 20 |
 
 ## Usage
 
