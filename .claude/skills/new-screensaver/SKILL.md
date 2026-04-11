@@ -97,10 +97,10 @@ Edit `src/registry.ts`:
 Edit `README.md` and add a row to the screensavers table in alphabetical order:
 
 ```markdown
-| `<name>` | <img src="screenshots/<name>.png" alt="<name>" width="150"> | Short description | FPS |
+| `<name>` | <img src="screenshots/<name>.png" alt="<name>" width="150"> | Short description |
 ```
 
-Use the description and fps from the `ScreensaverModule` export.
+Use the description from the `ScreensaverModule` export.
 
 ## 6. Bump the version
 
