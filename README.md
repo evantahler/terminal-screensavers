@@ -41,6 +41,7 @@ Press any key to exit.
 | `pipes` | <img src="screenshots/pipes.png" alt="pipes" width="150"> | Random pipe segments with box-drawing characters |
 | `platformer` | <img src="screenshots/platformer.png" alt="platformer" width="150"> | Procedurally generated 2D platformer with jumping, enemies, and coins |
 | `ripples` | <img src="screenshots/ripples.png" alt="ripples" width="150"> | Concentric ripples expanding like raindrops on a pond |
+| `sand-simulation` | <img src="screenshots/sand-simulation.png" alt="sand-simulation" width="150"> | Falling sand particles that pile up and cascade with layered colors |
 | `smoke` | <img src="screenshots/smoke.png" alt="smoke" width="150"> | Wispy smoke rising and dissipating with varying character density |
 | `starfield` | <img src="screenshots/starfield.png" alt="starfield" width="150"> | 3D stars flying toward the viewer |
 | `tetris` | <img src="screenshots/tetris.png" alt="tetris" width="150"> | Auto-playing Tetris with falling pieces, line clears, and scoring |
