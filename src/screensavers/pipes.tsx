@@ -1,7 +1,7 @@
-import { Box, Text } from "ink";
-import type React from "react";
+import { Box } from "ink";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { renderSparseRow } from "./utils.js";
 
 // Box-drawing characters for pipe directions
 // Direction: 0=up, 1=right, 2=down, 3=left
@@ -102,34 +102,11 @@ function Pipes({ columns, rows }: ScreensaverProps) {
     }
   }
 
-  const lines = grid.map((row, y) => {
-    const segments: React.ReactNode[] = [];
-    let spaces = "";
-    for (let x = 0; x < row.length; x++) {
-      const cell = row[x];
-      if (!cell) {
-        spaces += " ";
-      } else {
-        if (spaces) {
-          segments.push(spaces);
-          spaces = "";
-        }
-        segments.push(
-          <Text key={x} color={cell.color}>
-            {cell.char}
-          </Text>,
-        );
-      }
-    }
-    if (spaces) segments.push(spaces);
-    return (
-      <Box key={y}>
-        <Text>{segments}</Text>
-      </Box>
-    );
-  });
-
-  return <Box flexDirection="column">{lines}</Box>;
+  return (
+    <Box flexDirection="column">
+      {grid.map((row, y) => renderSparseRow(row, y))}
+    </Box>
+  );
 }
 
 export const pipes: ScreensaverModule = {

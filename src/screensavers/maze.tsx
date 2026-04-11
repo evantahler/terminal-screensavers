@@ -2,6 +2,7 @@ import { Box, Text } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { renderSparseRow } from "./utils.js";
 
 interface Cell {
   top: boolean;
@@ -22,40 +23,37 @@ interface SolverState {
   current: Position | null;
 }
 
+function initMazeState(width: number, height: number) {
+  return {
+    maze: Array.from({ length: height }, () =>
+      Array.from({ length: width }, () => ({
+        top: true,
+        right: true,
+        bottom: true,
+        left: true,
+      })),
+    ),
+    visited: Array.from({ length: height }, () =>
+      Array.from({ length: width }, () => false),
+    ),
+    stack: [{ x: 0, y: 0 }] as Position[],
+    phase: "generating" as "generating" | "solving" | "done",
+    solver: {
+      path: new Set<string>(),
+      visited: new Set<string>(),
+      stack: [] as Position[],
+      current: null as Position | null,
+    },
+    doneFrames: 0,
+    currentCell: { x: 0, y: 0 } as Position | null,
+  };
+}
+
 const Maze: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   const width = Math.floor(columns / 2);
   const height = Math.floor((rows - 1) / 2);
 
-  const state = useRef<{
-    maze: Cell[][];
-    visited: boolean[][];
-    stack: Position[];
-    phase: "generating" | "solving" | "done";
-    solver: SolverState;
-    doneFrames: number;
-    currentCell: Position | null;
-  }>({
-    maze: Array(height)
-      .fill(null)
-      .map(() =>
-        Array(width)
-          .fill(null)
-          .map(() => ({ top: true, right: true, bottom: true, left: true })),
-      ),
-    visited: Array(height)
-      .fill(null)
-      .map(() => Array(width).fill(false)),
-    stack: [{ x: 0, y: 0 }],
-    phase: "generating",
-    solver: {
-      path: new Set<string>(),
-      visited: new Set<string>(),
-      stack: [],
-      current: null,
-    },
-    doneFrames: 0,
-    currentCell: { x: 0, y: 0 },
-  });
+  const state = useRef(initMazeState(width, height));
 
   const s = state.current;
 
@@ -187,34 +185,14 @@ const Maze: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   if (s.phase === "done") {
     s.doneFrames++;
     if (s.doneFrames > 30) {
-      // Reset everything
-      s.maze = Array(height)
-        .fill(null)
-        .map(() =>
-          Array(width)
-            .fill(null)
-            .map(() => ({ top: true, right: true, bottom: true, left: true })),
-        );
-      s.visited = Array(height)
-        .fill(null)
-        .map(() => Array(width).fill(false));
-      s.stack = [{ x: 0, y: 0 }];
-      s.phase = "generating";
-      s.solver = {
-        path: new Set<string>(),
-        visited: new Set<string>(),
-        stack: [],
-        current: null,
-      };
-      s.doneFrames = 0;
-      s.currentCell = { x: 0, y: 0 };
+      Object.assign(s, initMazeState(width, height));
     }
   }
 
   // Render the maze
-  const output: string[] = [];
+  const grid: ({ char: string; color: string } | null)[][] = [];
   for (let y = 0; y < height; y++) {
-    let line = "";
+    const row: ({ char: string; color: string } | null)[] = [];
     for (let x = 0; x < width; x++) {
       const cell = s.maze[y]?.[x];
       if (!cell) continue;
@@ -232,27 +210,26 @@ const Maze: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
       const isVisitedGen = s.visited[y]?.[x];
 
       if (isCurrentGen) {
-        line += "\x1b[32m█ \x1b[0m"; // Green for current generation position
+        row.push({ char: "█", color: "green" }, { char: " ", color: "green" });
       } else if (isInPath) {
-        line += "\x1b[36m· \x1b[0m"; // Cyan for solution path
+        row.push({ char: "·", color: "cyan" }, { char: " ", color: "cyan" });
       } else if (isCurrentSolve) {
-        line += "\x1b[33m· \x1b[0m"; // Yellow for current solving position
+        row.push(
+          { char: "·", color: "yellow" },
+          { char: " ", color: "yellow" },
+        );
       } else if (isVisitedGen) {
-        line += "  "; // Empty passage
+        row.push(null, null);
       } else {
-        line += "\x1b[90m█ \x1b[0m"; // Gray wall
+        row.push({ char: "█", color: "gray" }, { char: " ", color: "gray" });
       }
     }
-    output.push(line);
+    grid.push(row);
   }
 
   return (
     <Box flexDirection="column">
-      {output.map((line, y) => (
-        <Box key={y}>
-          <Text>{line}</Text>
-        </Box>
-      ))}
+      {grid.map((row, y) => renderSparseRow(row, y))}
     </Box>
   );
 };

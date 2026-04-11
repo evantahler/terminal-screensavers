@@ -22,8 +22,7 @@
 ## Adding a Screensaver
 
 1. Create `src/screensavers/<name>.tsx` exporting a `ScreensaverModule`
-2. Re-export from `src/screensavers/index.ts`
-3. Add to the array in `src/registry.ts`
+2. Import and add to the array in `src/registry.ts`
 
 ## Versioning — IMPORTANT
 

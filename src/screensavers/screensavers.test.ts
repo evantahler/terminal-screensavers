@@ -1,26 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { screensavers } from "../registry.js";
-import * as screensaverExports from "./index.js";
 
 const KEBAB_CASE_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 
 describe("screensaver registry", () => {
   test("registry is not empty", () => {
     expect(screensavers.length).toBeGreaterThan(0);
-  });
-
-  test("every exported screensaver is in the registry", () => {
-    const exportedModules = Object.values(screensaverExports);
-    for (const mod of exportedModules) {
-      expect(screensavers).toContain(mod);
-    }
-  });
-
-  test("every registry entry is exported from index", () => {
-    const exportedModules = Object.values(screensaverExports);
-    for (const mod of screensavers) {
-      expect(exportedModules).toContain(mod);
-    }
   });
 
   test("no duplicate names in registry", () => {

@@ -11,19 +11,21 @@ interface Fish {
   color: string;
 }
 
-interface Bubble {
-  x: number;
-  y: number;
-  speed: number;
-}
-
 interface Seaweed {
   x: number;
   phase: number;
+  height: number;
+}
+
+interface BubbleDisplay {
+  x: number;
+  y: number;
+  speed: number;
+  char: string;
 }
 
 const FISH_RIGHT = ["><>", "><))'>", ">°)))><"];
-const FISH_LEFT = ["<><", "<'((<>", "><((((°>"];
+const FISH_LEFT = ["<><", "<'((<>", "<(((°<"];
 const FISH_COLORS = ["cyan", "yellow", "magenta", "green", "red"];
 const BUBBLE_CHARS = ["°", "o"];
 
@@ -35,7 +37,7 @@ const Aquarium: React.FC<ScreensaverProps> = ({
 }) => {
   const state = useRef<{
     fish: Fish[];
-    bubbles: Bubble[];
+    bubbles: BubbleDisplay[];
     seaweed: Seaweed[];
     initialized: boolean;
   }>({
@@ -66,6 +68,7 @@ const Aquarium: React.FC<ScreensaverProps> = ({
       x: Math.floor(Math.random() * columns),
       y: Math.floor(Math.random() * (rows - 1)),
       speed: Math.random() * 0.3 + 0.2,
+      char: BUBBLE_CHARS[Math.floor(Math.random() * BUBBLE_CHARS.length)],
     }));
 
     // Initialize seaweed (6-10 stalks)
@@ -73,6 +76,7 @@ const Aquarium: React.FC<ScreensaverProps> = ({
     state.current.seaweed = Array.from({ length: seaweedCount }, () => ({
       x: Math.floor(Math.random() * columns),
       phase: Math.random() * Math.PI * 2,
+      height: Math.floor(Math.random() * 4) + 3,
     }));
 
     state.current.initialized = true;
@@ -112,7 +116,7 @@ const Aquarium: React.FC<ScreensaverProps> = ({
 
   // Draw seaweed
   for (const weed of state.current.seaweed) {
-    const height = Math.floor(Math.random() * 4) + 3;
+    const { height } = weed;
     const x = Math.floor(weed.x);
     for (let i = 0; i < height; i++) {
       const y = rows - 2 - i;
@@ -132,7 +136,7 @@ const Aquarium: React.FC<ScreensaverProps> = ({
     const y = Math.floor(bubble.y);
     if (y >= 0 && y < rows - 1 && x >= 0 && x < columns) {
       grid[y][x] = {
-        char: BUBBLE_CHARS[Math.floor(Math.random() * BUBBLE_CHARS.length)],
+        char: bubble.char,
         color: "cyan",
       };
     }

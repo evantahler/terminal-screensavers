@@ -1,7 +1,7 @@
-import { Box, Text } from "ink";
-import type React from "react";
+import { Box } from "ink";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { bounce, renderSparseRow } from "./utils.js";
 
 interface Vertex {
   x: number;
@@ -17,9 +17,14 @@ interface Polygon {
 
 const TRAIL_LENGTH = 8;
 const COLOR_SCHEMES = {
-  cyan: ["\x1b[96m", "\x1b[36m", "\x1b[96m", "\x1b[36m"],
-  magenta: ["\x1b[95m", "\x1b[35m", "\x1b[95m", "\x1b[35m"],
+  cyan: ["#00ffff", "#008b8b", "#00ffff", "#008b8b"],
+  magenta: ["#ff00ff", "#8b008b", "#ff00ff", "#8b008b"],
 };
+
+interface GridCell {
+  char: string;
+  color: string;
+}
 
 function initPolygon(columns: number, rows: number): Polygon {
   const vertices: Vertex[] = [];
@@ -35,17 +40,12 @@ function initPolygon(columns: number, rows: number): Polygon {
 }
 
 function updateVertex(v: Vertex, columns: number, rows: number): void {
-  v.x += v.dx;
-  v.y += v.dy;
-
-  if (v.x <= 0 || v.x >= columns - 1) {
-    v.dx = -v.dx;
-    v.x = Math.max(0, Math.min(columns - 1, v.x));
-  }
-  if (v.y <= 0 || v.y >= rows - 1) {
-    v.dy = -v.dy;
-    v.y = Math.max(0, Math.min(rows - 1, v.y));
-  }
+  const bx = bounce(v.x, v.dx, columns - 1);
+  const by = bounce(v.y, v.dy, rows - 1);
+  v.x = bx.pos;
+  v.dx = bx.vel;
+  v.y = by.pos;
+  v.dy = by.vel;
 }
 
 function bresenhamLine(
@@ -53,7 +53,7 @@ function bresenhamLine(
   _y0: number,
   _x1: number,
   _y1: number,
-  grid: string[][],
+  grid: (GridCell | null)[][],
   color: string,
 ): void {
   let cx = Math.floor(_x0);
@@ -69,7 +69,7 @@ function bresenhamLine(
 
   while (true) {
     if (cy >= 0 && cy < grid.length && cx >= 0 && cx < grid[0].length) {
-      grid[cy][cx] = `${color}*\x1b[0m`;
+      grid[cy][cx] = { char: "*", color };
     }
 
     if (cx === ex && cy === ey) break;
@@ -86,15 +86,13 @@ function bresenhamLine(
   }
 }
 
-function drawPolygon(
-  polygon: Polygon,
-  grid: string[][],
+function drawPolygonVertices(
+  vertices: Vertex[],
+  grid: (GridCell | null)[][],
   colors: string[],
   trailIndex: number,
 ): void {
-  const vertices = polygon.vertices;
-  const colorIndex = trailIndex % colors.length;
-  const color = colors[colorIndex];
+  const color = colors[trailIndex % colors.length];
 
   for (let i = 0; i < 4; i++) {
     const v0 = vertices[i];
@@ -144,29 +142,23 @@ const Mystify: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   }
 
   // Create grid
-  const grid: string[][] = Array.from({ length: height }, () =>
-    Array.from({ length: columns }, () => " "),
+  const grid: (GridCell | null)[][] = Array.from({ length: height }, () =>
+    Array.from({ length: columns }, () => null),
   );
 
   // Draw trails for polygon1 (cyan/blue)
   for (let i = 0; i < polygon1.trail.length; i++) {
-    const trailPolygon = { vertices: polygon1.trail[i], trail: [] };
-    drawPolygon(trailPolygon, grid, COLOR_SCHEMES.cyan, i);
+    drawPolygonVertices(polygon1.trail[i], grid, COLOR_SCHEMES.cyan, i);
   }
 
   // Draw trails for polygon2 (magenta/red)
   for (let i = 0; i < polygon2.trail.length; i++) {
-    const trailPolygon = { vertices: polygon2.trail[i], trail: [] };
-    drawPolygon(trailPolygon, grid, COLOR_SCHEMES.magenta, i);
+    drawPolygonVertices(polygon2.trail[i], grid, COLOR_SCHEMES.magenta, i);
   }
 
   return (
     <Box flexDirection="column">
-      {grid.map((row, y) => (
-        <Box key={y}>
-          <Text>{row.join("")}</Text>
-        </Box>
-      ))}
+      {grid.map((row, y) => renderSparseRow(row, y))}
     </Box>
   );
 };
