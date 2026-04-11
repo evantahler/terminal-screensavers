@@ -141,10 +141,22 @@ const Fireworks: React.FC<ScreensaverProps> = ({
     if (y >= 0 && y < rows && x >= 0 && x < columns) {
       grid[y][x] = { char: "|", color: rocket.color };
     }
-    if (y + 1 >= 0 && y + 1 < rows && x >= 0 && x < columns && !grid[y + 1][x]) {
+    if (
+      y + 1 >= 0 &&
+      y + 1 < rows &&
+      x >= 0 &&
+      x < columns &&
+      !grid[y + 1][x]
+    ) {
       grid[y + 1][x] = { char: ":", color: "#888888" };
     }
-    if (y + 2 >= 0 && y + 2 < rows && x >= 0 && x < columns && !grid[y + 2][x]) {
+    if (
+      y + 2 >= 0 &&
+      y + 2 < rows &&
+      x >= 0 &&
+      x < columns &&
+      !grid[y + 2][x]
+    ) {
       grid[y + 2][x] = { char: ".", color: "#555555" };
     }
   }
