@@ -132,8 +132,7 @@ export function Menu({
                 const thumbStart = Math.round(
                   (scrollStart / maxScroll) * (visibleItems.length - thumbSize),
                 );
-                const isThumb =
-                  i >= thumbStart && i < thumbStart + thumbSize;
+                const isThumb = i >= thumbStart && i < thumbStart + thumbSize;
                 return (
                   <Text key={i} dimColor={!isThumb}>
                     {isThumb ? "█" : "│"}
