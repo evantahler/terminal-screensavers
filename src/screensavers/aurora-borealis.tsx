@@ -42,6 +42,7 @@ function AuroraBorealis({
   const starsRef = useRef<Star[]>([]);
   const curtainsRef = useRef<Curtain[]>([]);
   const starMapRef = useRef<Map<string, Star>>(new Map());
+  const colorCacheRef = useRef<Map<string, string>>(new Map());
 
   const height = rows - 1;
 
@@ -129,7 +130,15 @@ function AuroraBorealis({
       if (maxIntensity > 0.05) {
         const saturation = 0.7 + maxIntensity * 0.3;
         const lightness = 0.2 + maxIntensity * 0.5;
-        const color = hslToHex(bestHue % 360, saturation, lightness);
+        const qH = Math.round((bestHue % 360) / 5) * 5;
+        const qS = Math.round((saturation * 100) / 10) * 10;
+        const qL = Math.round((lightness * 100) / 5) * 5;
+        const cacheKey = `${qH},${qS},${qL}`;
+        let color = colorCacheRef.current.get(cacheKey);
+        if (!color) {
+          color = hslToHex(bestHue % 360, saturation, lightness);
+          colorCacheRef.current.set(cacheKey, color);
+        }
 
         let char: string;
         if (maxIntensity > 0.7) char = "█";

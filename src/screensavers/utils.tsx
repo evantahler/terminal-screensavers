@@ -25,30 +25,54 @@ export interface SparseCell {
   bold?: boolean;
 }
 
-/** Render a sparse row, grouping consecutive spaces for performance. */
+/** Render a sparse row, grouping consecutive spaces and merging adjacent same-colored cells. */
 export function renderSparseRow(
   row: (SparseCell | null)[],
   y: number,
 ): React.ReactNode {
   const segments: React.ReactNode[] = [];
   let spaces = "";
+  let runChars = "";
+  let runColor = "";
+  let runBold = false;
+  let runStart = 0;
+
+  function flushRun() {
+    if (runChars) {
+      segments.push(
+        <Text key={runStart} color={runColor} bold={runBold}>
+          {runChars}
+        </Text>,
+      );
+      runChars = "";
+    }
+  }
 
   for (let x = 0; x < row.length; x++) {
     const cell = row[x];
     if (!cell || cell.char === " ") {
+      flushRun();
       spaces += " ";
     } else {
       if (spaces) {
         segments.push(spaces);
         spaces = "";
       }
-      segments.push(
-        <Text key={x} color={cell.color} bold={cell.bold}>
-          {cell.char}
-        </Text>,
-      );
+      if (
+        runChars &&
+        (cell.color !== runColor || (cell.bold ?? false) !== runBold)
+      ) {
+        flushRun();
+      }
+      if (!runChars) {
+        runColor = cell.color;
+        runBold = cell.bold ?? false;
+        runStart = x;
+      }
+      runChars += cell.char;
     }
   }
+  flushRun();
   if (spaces) segments.push(spaces);
 
   return (
