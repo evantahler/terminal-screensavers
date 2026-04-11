@@ -278,19 +278,13 @@ When `columns` or `rows` change, reinitialize state rather than trying to resize
 
 ## Current optimization status
 
-### Screensavers using `renderSparseRow()`
+Most screensavers use `renderSparseRow()`. To check which ones don't, run:
 
-ant-colony, aquarium, aurora-borealis, binary-rain, boids, bonsai, bubbles, dna-helix, fire, fireworks, flying-toasters, gravity-wells, kaleidoscope, lava-lamp, lightning, mandelbrot-zoom, matrix-rain, maze, mystify, particle-system, perlin-noise-field, pipes, platformer, ripples, sand-simulation, smoke, starfield, tetris, ticker-tape, tower-of-hanoi, tunnel.
+```bash
+grep -rL "renderSparseRow" src/screensavers/*.tsx | grep -v utils.tsx
+```
 
-### Screensavers not yet using `renderSparseRow()`
-
-- **game-of-life** — renders per-row Box/Text pairs for the full grid
-- **bouncing-logo** — creates a Box for every row, most empty
-- **digital-clock** — creates a Box for every row with string padding
-
-### Other known performance issues
+### Known performance issues
 
 - **`useFrame` hook** — calls `setFrame()` and `setElapsed()` separately, causing two React reconciliation passes per frame tick
 - **`renderSparseRow`** — does not merge adjacent same-colored cells; creates a `<Text>` per non-empty cell even when neighbors share color+bold
-- **boids** — `angleToColor()` recalculates HSL→RGB per boid per frame with no cache
-- **aurora-borealis** — `hslToHex()` called per pixel per frame with no cache
