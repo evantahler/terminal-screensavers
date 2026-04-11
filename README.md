@@ -45,6 +45,7 @@ Press any key to exit.
 | `smoke` | <img src="screenshots/smoke.png" alt="smoke" width="150"> | Wispy smoke rising and dissipating with varying character density |
 | `starfield` | <img src="screenshots/starfield.png" alt="starfield" width="150"> | 3D stars flying toward the viewer |
 | `tetris` | <img src="screenshots/tetris.png" alt="tetris" width="150"> | Auto-playing Tetris with falling pieces, line clears, and scoring |
+| `ticker-tape` | <img src="screenshots/ticker-tape.png" alt="ticker-tape" width="150"> | Scrolling stock tickers and news headlines with color-coded prices |
 | `tower-of-hanoi` | <img src="screenshots/tower-of-hanoi.png" alt="tower-of-hanoi" width="150"> | Animated Tower of Hanoi puzzle solution |
 | `tunnel` | <img src="screenshots/tunnel.png" alt="tunnel" width="150"> | Spiraling tunnel vortex zooming toward the viewer |
 
