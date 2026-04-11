@@ -2,6 +2,7 @@ import { aquarium } from "./screensavers/aquarium.js";
 import { auroraBorealis } from "./screensavers/aurora-borealis.js";
 import { bonsai } from "./screensavers/bonsai.js";
 import { bouncingLogo } from "./screensavers/bouncing-logo.js";
+import { bubbles } from "./screensavers/bubbles.js";
 import { digitalClock } from "./screensavers/digital-clock.js";
 import { dnaHelix } from "./screensavers/dna-helix.js";
 import { fire } from "./screensavers/fire.js";
@@ -21,6 +22,7 @@ export const screensavers: ScreensaverModule[] = [
   aquarium,
   auroraBorealis,
   bonsai,
+  bubbles,
   bouncingLogo,
   digitalClock,
   dnaHelix,
