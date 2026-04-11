@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 interface Platform {
   x: number;
@@ -337,13 +338,9 @@ const Platformer: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
 
   // Build grid
   const contentRows = rows - 1;
-  const grid: { char: string; color: string }[][] = Array.from(
+  const grid: (SparseCell | null)[][] = Array.from(
     { length: contentRows },
-    (_, y) =>
-      Array.from({ length: columns }, () => ({
-        char: " ",
-        color: y < groundY * 0.4 ? SKY_COLORS[0] : SKY_COLORS[1],
-      })),
+    () => Array.from({ length: columns }, () => null),
   );
 
   // Draw clouds
@@ -467,15 +464,7 @@ const Platformer: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
 
   return (
     <Box flexDirection="column">
-      {grid.map((row, y) => (
-        <Box key={y}>
-          {row.map((cell, x) => (
-            <Text key={x} color={cell.color}>
-              {cell.char}
-            </Text>
-          ))}
-        </Box>
-      ))}
+      {grid.map((row, y) => renderSparseRow(row, y))}
     </Box>
   );
 };

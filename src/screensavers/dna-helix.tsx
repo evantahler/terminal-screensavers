@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 const DNAHelix: React.FC<ScreensaverProps> = ({ columns, rows }) => {
   const state = useRef({ offset: 0 });
@@ -35,9 +36,6 @@ const DNAHelix: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     const basePairIndex = Math.floor((y + state.current.offset * 2) / 4) % 2;
     const basePair = basePairs[basePairIndex];
 
-    // Build the row
-    const rowChars: Array<{ char: string; color: string; bold?: boolean }> = [];
-
     // Sort positions to draw back strand first
     const positions = [
       {
@@ -67,46 +65,27 @@ const DNAHelix: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     const maxX = Math.max(strand1X, strand2X);
     const distance = maxX - minX;
 
-    // Build row content
+    const row: (SparseCell | null)[] = new Array(columns).fill(null);
+
     for (let x = 0; x < columns; x++) {
       if (x === strand1X) {
         const pos = positions.find((p) => p.isStrand1);
         if (pos) {
-          rowChars.push({
-            char: pos.char,
-            color: pos.color,
-            bold: pos.bold,
-          });
+          row[x] = { char: pos.char, color: pos.color, bold: pos.bold };
         }
       } else if (x === strand2X) {
         const pos = positions.find((p) => !p.isStrand1);
         if (pos) {
-          rowChars.push({
-            char: pos.char,
-            color: pos.color,
-            bold: pos.bold,
-          });
+          row[x] = { char: pos.char, color: pos.color, bold: pos.bold };
         }
       } else if (x > minX && x < maxX && distance < amplitude * 1.5) {
-        // Draw base pair connector
         const progress = (x - minX) / distance;
-        const connector = "-";
         const color = progress < 0.5 ? basePair.color1 : basePair.color2;
-        rowChars.push({ char: connector, color });
-      } else {
-        rowChars.push({ char: " ", color: "#000000" });
+        row[x] = { char: "-", color };
       }
     }
 
-    output.push(
-      <Box key={y}>
-        {rowChars.map((item, idx) => (
-          <Text key={idx} color={item.color} bold={item.bold}>
-            {item.char}
-          </Text>
-        ))}
-      </Box>,
-    );
+    output.push(renderSparseRow(row, y));
   }
 
   return <Box flexDirection="column">{output}</Box>;
