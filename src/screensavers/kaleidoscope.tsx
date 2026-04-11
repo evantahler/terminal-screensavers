@@ -50,11 +50,22 @@ interface SourcePoint {
   amplitude: number;
 }
 
+interface LutEntry {
+  r: number;
+  angle: number;
+  nx: number;
+  ny: number;
+}
+
 interface KaleidoscopeState {
   sources: SourcePoint[];
   foldCount: number;
   foldTimer: number;
   hueOffset: number;
+  lut: LutEntry[];
+  lutCols: number;
+  lutRows: number;
+  colorCache: Map<string, string>;
 }
 
 const FOLD_MODES = [4, 6, 8];
@@ -77,6 +88,10 @@ function Kaleidoscope({ columns, rows, frame }: ScreensaverProps) {
     foldCount: FOLD_MODES[0],
     foldTimer: 0,
     hueOffset: 0,
+    lut: [],
+    lutCols: 0,
+    lutRows: 0,
+    colorCache: new Map(),
   });
 
   const state = stateRef.current;
@@ -98,32 +113,45 @@ function Kaleidoscope({ columns, rows, frame }: ScreensaverProps) {
   const time = frame * 0.02;
   const centerX = columns / 2;
   const centerY = displayRows / 2;
-  // Scale so the pattern fits nicely; account for 2:1 aspect ratio
   const scaleX = Math.min(columns, displayRows * 2) / 2;
   const scaleY = scaleX / 2;
+
+  // Rebuild LUT on resize
+  if (state.lutCols !== columns || state.lutRows !== displayRows) {
+    state.lutCols = columns;
+    state.lutRows = displayRows;
+    state.lut = new Array(columns * displayRows);
+    for (let y = 0; y < displayRows; y++) {
+      for (let x = 0; x < columns; x++) {
+        const nx = (x - centerX) / scaleX;
+        const ny = (y - centerY) / scaleY;
+        const r = Math.sqrt(nx * nx + ny * ny);
+        let angle = Math.atan2(ny, nx);
+        if (angle < 0) angle += Math.PI * 2;
+        state.lut[y * columns + x] = { r, angle, nx, ny };
+      }
+    }
+  }
+
+  // Clear color cache each frame (hueOffset changes)
+  state.colorCache.clear();
 
   const grid: (null | { char: string; color: string })[][] = Array.from(
     { length: displayRows },
     () => Array.from({ length: columns }, () => null),
   );
 
+  const segmentAngle = (Math.PI * 2) / folds;
+
   for (let y = 0; y < displayRows; y++) {
     for (let x = 0; x < columns; x++) {
-      // Normalize to centered coordinates
-      const nx = (x - centerX) / scaleX;
-      const ny = (y - centerY) / scaleY;
+      const entry = state.lut[y * columns + x];
+      const { r, angle } = entry;
 
-      // Convert to polar
-      const r = Math.sqrt(nx * nx + ny * ny);
-      if (r > 1.2) continue; // Outside the kaleidoscope circle
-
-      let angle = Math.atan2(ny, nx);
-      if (angle < 0) angle += Math.PI * 2;
+      if (r > 1.2) continue;
 
       // Fold the angle into one segment, then mirror
-      const segmentAngle = (Math.PI * 2) / folds;
       let foldedAngle = angle % segmentAngle;
-      // Mirror every other segment
       const segmentIndex = Math.floor(angle / segmentAngle);
       if (segmentIndex % 2 === 1) {
         foldedAngle = segmentAngle - foldedAngle;
@@ -161,12 +189,19 @@ function Kaleidoscope({ columns, rows, frame }: ScreensaverProps) {
         CHARS.length - 1,
       );
 
-      // Color based on angle, radius, and time
-      const hue =
+      // Quantize color inputs for cache hits
+      const hueRaw =
         (foldedAngle * (180 / Math.PI) * 3 + r * 120 + state.hueOffset) % 360;
-      const saturation = 0.7 + intensity * 0.3;
-      const lightness = 0.25 + intensity * 0.4;
-      const color = hslToHex(hue, saturation, lightness);
+      const hue = Math.round(hueRaw) % 360;
+      const sat = Math.round((0.7 + intensity * 0.3) * 20) / 20;
+      const lit = Math.round((0.25 + intensity * 0.4) * 20) / 20;
+
+      const cacheKey = `${hue},${sat},${lit}`;
+      let color = state.colorCache.get(cacheKey);
+      if (!color) {
+        color = hslToHex(hue, sat, lit);
+        state.colorCache.set(cacheKey, color);
+      }
 
       grid[y][x] = { char: CHARS[charIdx], color };
     }
