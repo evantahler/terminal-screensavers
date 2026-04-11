@@ -12,6 +12,7 @@ const cli = meow(
 
   Options
     --list, -l   List available screensavers
+    --menu, -m   Open the interactive menu
     --fps, -f    Override frames per second
 
   Controls
@@ -29,6 +30,7 @@ const cli = meow(
     importMeta: import.meta,
     flags: {
       list: { type: "boolean", shortFlag: "l" },
+      menu: { type: "boolean", shortFlag: "m" },
       fps: { type: "number", shortFlag: "f" },
     },
   },
@@ -66,5 +68,6 @@ render(
     screensavers={screensavers}
     initialIndex={initialIndex}
     fpsOverride={cli.flags.fps}
+    startInMenu={cli.flags.menu}
   />,
 );

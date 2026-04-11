@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function useFullScreen() {
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
     const enterFullScreen = () => {
       process.stdout.write("\x1b[?1049h"); // alternate screen buffer
@@ -13,6 +15,7 @@ export function useFullScreen() {
     };
 
     enterFullScreen();
+    setReady(true);
 
     const handleExit = () => {
       exitFullScreen();
@@ -28,4 +31,6 @@ export function useFullScreen() {
       process.off("SIGTERM", handleExit);
     };
   }, []);
+
+  return ready;
 }
