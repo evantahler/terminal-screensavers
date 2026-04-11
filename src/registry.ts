@@ -18,6 +18,7 @@ import { lavaLamp } from "./screensavers/lava-lamp.js";
 import { lightning } from "./screensavers/lightning.js";
 import { mandelbrotZoom } from "./screensavers/mandelbrot-zoom.js";
 import { matrixRain } from "./screensavers/matrix-rain.js";
+import { threeDMaze } from "./screensavers/maze-3d.js";
 import { maze } from "./screensavers/maze.js";
 import { mystify } from "./screensavers/mystify.js";
 import { particleSystem } from "./screensavers/particle-system.js";
@@ -57,6 +58,7 @@ export const screensavers: ScreensaverModule[] = [
   mandelbrotZoom,
   matrixRain,
   maze,
+  threeDMaze,
   mystify,
   particleSystem,
   perlinNoiseField,

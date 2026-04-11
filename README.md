@@ -39,6 +39,7 @@ Press any key to exit.
 | `mandelbrot-zoom` | <img src="screenshots/mandelbrot-zoom.png" alt="mandelbrot-zoom" width="150"> | Continuous zoom into the Mandelbrot set with colored ASCII |
 | `matrix-rain` | <img src="screenshots/matrix-rain.png" alt="matrix-rain" width="150"> | Falling green katakana and latin characters |
 | `maze` | <img src="screenshots/maze.png" alt="maze" width="150"> | Animated maze generation and solving |
+| `maze-3d` | <img src="screenshots/maze-3d.png" alt="maze-3d" width="150"> | First-person walk through an endless maze |
 | `mystify` | <img src="screenshots/mystify.png" alt="mystify" width="150"> | Bouncing geometric shapes like the Windows classic |
 | `particle-system` | <img src="screenshots/particle-system.png" alt="particle-system" width="150"> | Particle emitters with gravity, wind, and multiple modes: fountain, explosion, rain, sparks |
 | `perlin-noise-field` | <img src="screenshots/perlin-noise-field.png" alt="perlin-noise-field" width="150"> | Perlin noise visualized as characters of varying density with color gradients |
