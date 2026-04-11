@@ -19,7 +19,7 @@ export function bounce(
   return { pos: newPos, vel, bounced: false };
 }
 
-interface SparseCell {
+export interface SparseCell {
   char: string;
   color: string;
   bold?: boolean;
