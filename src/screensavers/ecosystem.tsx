@@ -237,23 +237,83 @@ function step(state: EcoState): void {
   state.generation++;
 }
 
-const CELL_CHARS: Record<Cell, string> = {
-  [Cell.Empty]: " ",
-  [Cell.Grass]: "·",
-  [Cell.Prey]: "○",
-  [Cell.Predator]: "▲",
-};
+// ANSI 24-bit color codes for each cell type — avoids React element overhead
+const ANSI_RESET = "\x1b[0m";
+const ANSI_GRASS = "\x1b[38;2;34;170;34m"; // #22aa22
+const ANSI_PREY = "\x1b[38;2;255;255;255m"; // #ffffff
+const ANSI_PREDATOR = "\x1b[38;2;255;68;68m"; // #ff4444
+const ANSI_STATUS = "\x1b[38;2;136;136;136m"; // #888888
 
-const CELL_COLORS: Record<Cell, string> = {
-  [Cell.Empty]: "",
-  [Cell.Grass]: "#22aa22",
-  [Cell.Prey]: "#ffffff",
-  [Cell.Predator]: "#ff4444",
-};
+const CELL_ANSI = [
+  "", // Empty — no color needed for spaces
+  ANSI_GRASS,
+  ANSI_PREY,
+  ANSI_PREDATOR,
+];
+
+const CELL_CHARS = [" ", "·", "○", "▲"];
+
+/** Render a grid row as a single pre-colored ANSI string */
+function renderRow(row: Cell[]): string {
+  let out = "";
+  let lastColor = -1;
+  for (let x = 0; x < row.length; x++) {
+    const cell = row[x];
+    if (cell === Cell.Empty) {
+      out += " ";
+    } else {
+      if (cell !== lastColor) {
+        out += CELL_ANSI[cell];
+        lastColor = cell;
+      }
+      out += CELL_CHARS[cell];
+    }
+  }
+  if (lastColor >= 0) out += ANSI_RESET;
+  return out;
+}
+
+/** Render the status bar row */
+function renderStatusRow(row: Cell[], status: string): string {
+  let out = "";
+  let lastAnsi = "";
+
+  // Status portion
+  for (let x = 0; x < status.length && x < row.length; x++) {
+    const ch = status[x];
+    let ansi = ANSI_STATUS;
+    if (ch === "·") ansi = ANSI_GRASS;
+    else if (ch === "○") ansi = ANSI_PREY;
+    else if (ch === "▲") ansi = ANSI_PREDATOR;
+    if (ansi !== lastAnsi) {
+      out += ansi;
+      lastAnsi = ansi;
+    }
+    out += ch;
+  }
+
+  // Rest of row
+  for (let x = status.length; x < row.length; x++) {
+    const cell = row[x];
+    if (cell === Cell.Empty) {
+      out += " ";
+    } else {
+      const ansi = CELL_ANSI[cell];
+      if (ansi !== lastAnsi) {
+        out += ansi;
+        lastAnsi = ansi;
+      }
+      out += CELL_CHARS[cell];
+    }
+  }
+  if (lastAnsi) out += ANSI_RESET;
+  return out;
+}
 
 const Ecosystem: React.FC<ScreensaverProps> = ({ columns, rows }) => {
   const contentHeight = rows - 1;
   const stateRef = useRef<EcoState | null>(null);
+  const linesRef = useRef<string[]>([]);
 
   if (
     stateRef.current === null ||
@@ -261,20 +321,22 @@ const Ecosystem: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     stateRef.current.height !== contentHeight
   ) {
     stateRef.current = createState(columns, contentHeight);
+    linesRef.current = new Array(contentHeight);
   }
 
   const state = stateRef.current;
   step(state);
 
-  // Count populations
+  // Count populations during a single pass
   let preyCount = 0;
   let predatorCount = 0;
   let grassCount = 0;
   for (let y = 0; y < state.height; y++) {
     for (let x = 0; x < state.width; x++) {
-      if (state.grid[y][x] === Cell.Prey) preyCount++;
-      else if (state.grid[y][x] === Cell.Predator) predatorCount++;
-      else if (state.grid[y][x] === Cell.Grass) grassCount++;
+      const c = state.grid[y][x];
+      if (c === Cell.Prey) preyCount++;
+      else if (c === Cell.Predator) predatorCount++;
+      else if (c === Cell.Grass) grassCount++;
     }
   }
 
@@ -284,160 +346,23 @@ const Ecosystem: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     return null;
   }
 
-  // Build status line
+  // Pre-render all rows as ANSI strings
+  const lines = linesRef.current;
+  const lastRow = state.height - 1;
+  for (let y = 0; y < lastRow; y++) {
+    lines[y] = renderRow(state.grid[y]);
+  }
+  // Status bar on last row
   const status = ` Gen ${state.generation}  ·${grassCount}  ○${preyCount}  ▲${predatorCount} `;
+  lines[lastRow] = renderStatusRow(state.grid[lastRow], status);
 
   return (
     <Box flexDirection="column">
-      {state.grid.map((row, y) => {
-        // Overlay status on last row
-        if (y === state.height - 1) {
-          // Build status segments by grouping consecutive same-color chars
-          const statusSegs: React.ReactNode[] = [];
-          let sRun = "";
-          let sColor = "";
-          let sIdx = 0;
-          for (let x = 0; x < status.length; x++) {
-            const ch = status[x];
-            let color = "#888888";
-            if (ch === "·") color = "#22aa22";
-            else if (ch === "○") color = "#ffffff";
-            else if (ch === "▲") color = "#ff4444";
-            if (color === sColor) {
-              sRun += ch;
-            } else {
-              if (sRun) {
-                statusSegs.push(
-                  <Text key={sIdx++} color={sColor}>
-                    {sRun}
-                  </Text>,
-                );
-              }
-              sRun = ch;
-              sColor = color;
-            }
-          }
-          if (sRun) {
-            statusSegs.push(
-              <Text key={sIdx++} color={sColor}>
-                {sRun}
-              </Text>,
-            );
-          }
-          // Render rest of row after status
-          const restSegs: React.ReactNode[] = [];
-          let rRun = "";
-          let rColor = "";
-          let rIdx = 0;
-          for (let x = status.length; x < row.length; x++) {
-            const cell = row[x];
-            const ch = CELL_CHARS[cell];
-            const color = CELL_COLORS[cell];
-            if (cell === Cell.Empty) {
-              if (rColor !== "") {
-                restSegs.push(
-                  <Text key={`s${rIdx++}`} color={rColor}>
-                    {rRun}
-                  </Text>,
-                );
-                rRun = "";
-                rColor = "";
-              }
-              rRun += " ";
-            } else if (color === rColor) {
-              rRun += ch;
-            } else {
-              if (rRun) {
-                if (rColor) {
-                  restSegs.push(
-                    <Text key={`s${rIdx++}`} color={rColor}>
-                      {rRun}
-                    </Text>,
-                  );
-                } else {
-                  restSegs.push(rRun);
-                }
-              }
-              rRun = ch;
-              rColor = color;
-            }
-          }
-          if (rRun) {
-            if (rColor) {
-              restSegs.push(
-                <Text key={`s${rIdx++}`} color={rColor}>
-                  {rRun}
-                </Text>,
-              );
-            } else {
-              restSegs.push(rRun);
-            }
-          }
-          return (
-            <Box key={y}>
-              <Text>
-                {statusSegs}
-                {restSegs}
-              </Text>
-            </Box>
-          );
-        }
-
-        // Normal row: group consecutive same-type cells for performance
-        const segments: React.ReactNode[] = [];
-        let run = "";
-        let runColor = "";
-        let segIdx = 0;
-        for (let x = 0; x < row.length; x++) {
-          const cell = row[x];
-          const ch = CELL_CHARS[cell];
-          const color = CELL_COLORS[cell];
-          if (cell === Cell.Empty) {
-            if (runColor !== "") {
-              segments.push(
-                <Text key={segIdx++} color={runColor}>
-                  {run}
-                </Text>,
-              );
-              run = "";
-              runColor = "";
-            }
-            run += " ";
-          } else if (color === runColor) {
-            run += ch;
-          } else {
-            if (run) {
-              if (runColor) {
-                segments.push(
-                  <Text key={segIdx++} color={runColor}>
-                    {run}
-                  </Text>,
-                );
-              } else {
-                segments.push(run);
-              }
-            }
-            run = ch;
-            runColor = color;
-          }
-        }
-        if (run) {
-          if (runColor) {
-            segments.push(
-              <Text key={segIdx++} color={runColor}>
-                {run}
-              </Text>,
-            );
-          } else {
-            segments.push(run);
-          }
-        }
-        return (
-          <Box key={y}>
-            <Text>{segments}</Text>
-          </Box>
-        );
-      })}
+      {lines.map((line, y) => (
+        <Box key={y}>
+          <Text>{line}</Text>
+        </Box>
+      ))}
     </Box>
   );
 };
