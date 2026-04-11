@@ -24,6 +24,7 @@ interface State {
   predator: Predator | null;
   predatorCooldown: number;
   initialized: boolean;
+  colorCache: Map<number, string>;
 }
 
 const NUM_BOIDS = 60;
@@ -159,6 +160,7 @@ const Boids: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     predator: null,
     predatorCooldown: 200,
     initialized: false,
+    colorCache: new Map(),
   });
 
   const s = stateRef.current;
@@ -277,9 +279,17 @@ const Boids: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     const bx = Math.floor(boid.x);
     const by = Math.floor(boid.y);
     if (bx >= 0 && bx < columns && by >= 0 && by < contentRows) {
+      const angle = Math.atan2(boid.vy, boid.vx);
+      const quantizedDeg =
+        Math.round((((angle / (Math.PI * 2)) * 360 + 360) % 360) / 5) * 5;
+      let color = s.colorCache.get(quantizedDeg);
+      if (!color) {
+        color = angleToColor(boid.vx, boid.vy);
+        s.colorCache.set(quantizedDeg, color);
+      }
       grid[by][bx] = {
         char: directionChar(boid.vx, boid.vy),
-        color: angleToColor(boid.vx, boid.vy),
+        color,
       };
     }
   }

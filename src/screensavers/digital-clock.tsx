@@ -1,8 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
-import { bounce } from "./utils.js";
+import { type SparseCell, bounce, renderSparseRow } from "./utils.js";
 
 const DIGITS: Record<string, string[]> = {
   "0": ["█████", "█   █", "█   █", "█   █", "█████"],
@@ -73,31 +73,28 @@ const DigitalClock: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     clockLines[row] = line;
   }
 
+  const color = COLORS[s.colorIdx];
+
   // Render the screen
-  const screen: string[] = Array(rows - 1).fill("");
+  const screen: React.ReactNode[] = [];
   for (let row = 0; row < rows - 1; row++) {
     if (row >= s.y && row < s.y + CLOCK_HEIGHT) {
       const clockRow = clockLines[row - s.y];
-      screen[row] =
-        " ".repeat(s.x) +
-        clockRow +
-        " ".repeat(Math.max(0, columns - s.x - clockRow.length));
+      const sparseRow: (SparseCell | null)[] = new Array(columns).fill(null);
+      const startX = Math.max(0, Math.round(s.x));
+      for (let i = 0; i < clockRow.length; i++) {
+        const x = startX + i;
+        if (x >= 0 && x < columns && clockRow[i] !== " ") {
+          sparseRow[x] = { char: clockRow[i], color };
+        }
+      }
+      screen.push(renderSparseRow(sparseRow, row));
     } else {
-      screen[row] = " ".repeat(columns);
+      screen.push(renderSparseRow([], row));
     }
   }
 
-  const color = COLORS[s.colorIdx];
-
-  return (
-    <Box flexDirection="column">
-      {screen.map((line, idx) => (
-        <Box key={idx}>
-          <Text color={color}>{line}</Text>
-        </Box>
-      ))}
-    </Box>
-  );
+  return <Box flexDirection="column">{screen}</Box>;
 };
 
 export const digitalClock: ScreensaverModule = {

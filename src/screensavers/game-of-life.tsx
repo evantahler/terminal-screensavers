@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 const GameOfLife: React.FC<ScreensaverProps> = ({
   columns,
@@ -88,13 +89,12 @@ const GameOfLife: React.FC<ScreensaverProps> = ({
   // Render grid
   return (
     <Box flexDirection="column">
-      {nextGrid.map((row, y) => (
-        <Box key={y}>
-          <Text color="green">
-            {row.map((cell) => (cell ? "█" : " ")).join("")}
-          </Text>
-        </Box>
-      ))}
+      {nextGrid.map((row, y) => {
+        const sparseRow: (SparseCell | null)[] = row.map((cell) =>
+          cell ? { char: "█", color: "green" } : null,
+        );
+        return renderSparseRow(sparseRow, y);
+      })}
     </Box>
   );
 };
