@@ -21,6 +21,7 @@ import { mystify } from "./screensavers/mystify.js";
 import { pipes } from "./screensavers/pipes.js";
 import { platformer } from "./screensavers/platformer.js";
 import { ripples } from "./screensavers/ripples.js";
+import { sandSimulation } from "./screensavers/sand-simulation.js";
 import { smoke } from "./screensavers/smoke.js";
 import { starfield } from "./screensavers/starfield.js";
 import { tetris } from "./screensavers/tetris.js";
@@ -52,6 +53,7 @@ export const screensavers: ScreensaverModule[] = [
   pipes,
   platformer,
   ripples,
+  sandSimulation,
   smoke,
   starfield,
   towerOfHanoi,

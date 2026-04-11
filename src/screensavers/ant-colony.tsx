@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 interface Ant {
   x: number;
@@ -294,10 +295,8 @@ const AntColony: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   // Advance simulation
   stepSimulation(s);
 
-  // Build display grid
-  const display: { char: string; color: string }[][] = Array.from(
-    { length: height },
-    () => Array.from({ length: width }, () => ({ char: " ", color: "" })),
+  const display: (SparseCell | null)[][] = Array.from({ length: height }, () =>
+    new Array<SparseCell | null>(width).fill(null),
   );
 
   // Render pheromone trails
@@ -312,11 +311,13 @@ const AntColony: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
           PHEROMONE_CHARS.length - 1,
         );
         if (level > 0) {
-          display[y][x].char = PHEROMONE_CHARS[level];
-          display[y][x].color =
-            fi > hi
-              ? PHEROMONE_COLORS_FOOD[level]
-              : PHEROMONE_COLORS_HOME[level];
+          display[y][x] = {
+            char: PHEROMONE_CHARS[level],
+            color:
+              fi > hi
+                ? PHEROMONE_COLORS_FOOD[level]
+                : PHEROMONE_COLORS_HOME[level],
+          };
         }
       }
     }
@@ -364,21 +365,7 @@ const AntColony: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
 
   return (
     <Box flexDirection="column">
-      {display.map((row, y) => (
-        <Box key={y}>
-          <Text>
-            {row.map((cell, x) =>
-              cell.char === " " ? (
-                " "
-              ) : (
-                <Text key={x} color={cell.color}>
-                  {cell.char}
-                </Text>
-              ),
-            )}
-          </Text>
-        </Box>
-      ))}
+      {display.map((row, y) => renderSparseRow(row, y))}
     </Box>
   );
 };

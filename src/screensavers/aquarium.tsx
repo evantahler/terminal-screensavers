@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 interface Fish {
   x: number;
@@ -107,11 +108,8 @@ const Aquarium: React.FC<ScreensaverProps> = ({
     }
   }
 
-  // Build grid
-  const grid: { char: string; color: string }[][] = Array.from(
-    { length: rows },
-    () =>
-      Array.from({ length: columns }, () => ({ char: " ", color: "white" })),
+  const grid: (SparseCell | null)[][] = Array.from({ length: rows }, () =>
+    Array.from({ length: columns }, () => null),
   );
 
   // Draw seaweed
@@ -165,18 +163,9 @@ const Aquarium: React.FC<ScreensaverProps> = ({
     grid[rows - 1][x] = { char: "~", color: "yellow" };
   }
 
-  // Render grid
   return (
     <Box flexDirection="column">
-      {grid.map((row, y) => (
-        <Box key={y}>
-          {row.map((cell, x) => (
-            <Text key={x} color={cell.color}>
-              {cell.char}
-            </Text>
-          ))}
-        </Box>
-      ))}
+      {grid.map((row, y) => renderSparseRow(row, y))}
     </Box>
   );
 };
