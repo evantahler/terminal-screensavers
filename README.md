@@ -21,6 +21,7 @@ Press any key to exit.
 | `ant-colony` | <img src="screenshots/ant-colony.png" alt="ant-colony" width="150"> | Simulated ants leaving pheromone trails between nest and food |
 | `aquarium` | <img src="screenshots/aquarium.png" alt="aquarium" width="150"> | Fish, bubbles, and seaweed in an ASCII aquarium |
 | `aurora-borealis` | <img src="screenshots/aurora-borealis.png" alt="aurora-borealis" width="150"> | Shimmering curtains of northern lights with twinkling stars |
+| `boids` | <img src="screenshots/boids.png" alt="boids" width="150"> | Flocking simulation with boids that separate, align, and cohere |
 | `bonsai` | <img src="screenshots/bonsai.png" alt="bonsai" width="150"> | Procedurally growing bonsai tree |
 | `bouncing-logo` | <img src="screenshots/bouncing-logo.png" alt="bouncing-logo" width="150"> | DVD-style bouncing text block with color changes |
 | `bubbles` | <img src="screenshots/bubbles.png" alt="bubbles" width="150"> | Rising bubbles that wobble and pop |
