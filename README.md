@@ -38,6 +38,7 @@ Press any key to exit.
 | `matrix-rain` | <img src="screenshots/matrix-rain.png" alt="matrix-rain" width="150"> | Falling green katakana and latin characters |
 | `maze` | <img src="screenshots/maze.png" alt="maze" width="150"> | Animated maze generation and solving |
 | `mystify` | <img src="screenshots/mystify.png" alt="mystify" width="150"> | Bouncing geometric shapes like the Windows classic |
+| `particle-system` | <img src="screenshots/particle-system.png" alt="particle-system" width="150"> | Particle emitters with gravity, wind, and multiple modes: fountain, explosion, rain, sparks |
 | `pipes` | <img src="screenshots/pipes.png" alt="pipes" width="150"> | Random pipe segments with box-drawing characters |
 | `platformer` | <img src="screenshots/platformer.png" alt="platformer" width="150"> | Procedurally generated 2D platformer with jumping, enemies, and coins |
 | `ripples` | <img src="screenshots/ripples.png" alt="ripples" width="150"> | Concentric ripples expanding like raindrops on a pond |
