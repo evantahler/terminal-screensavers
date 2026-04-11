@@ -34,6 +34,7 @@ Press any key to exit.
 | `maze` | <img src="screenshots/maze.png" alt="maze" width="150"> | Animated maze generation and solving | 15 |
 | `mystify` | <img src="screenshots/mystify.png" alt="mystify" width="150"> | Bouncing geometric shapes like the Windows classic | 15 |
 | `pipes` | <img src="screenshots/pipes.png" alt="pipes" width="150"> | Random pipe segments with box-drawing characters | 15 |
+| `platformer` | <img src="screenshots/platformer.png" alt="platformer" width="150"> | Procedurally generated 2D platformer with jumping, enemies, and coins | 15 |
 | `ripples` | <img src="screenshots/ripples.png" alt="ripples" width="150"> | Concentric ripples expanding like raindrops on a pond | 18 |
 | `starfield` | <img src="screenshots/starfield.png" alt="starfield" width="150"> | 3D stars flying toward the viewer | 20 |
 | `tower-of-hanoi` | <img src="screenshots/tower-of-hanoi.png" alt="tower-of-hanoi" width="150"> | Animated Tower of Hanoi puzzle solution | 30 |

@@ -14,6 +14,7 @@ import { matrixRain } from "./screensavers/matrix-rain.js";
 import { maze } from "./screensavers/maze.js";
 import { mystify } from "./screensavers/mystify.js";
 import { pipes } from "./screensavers/pipes.js";
+import { platformer } from "./screensavers/platformer.js";
 import { ripples } from "./screensavers/ripples.js";
 import { starfield } from "./screensavers/starfield.js";
 import { towerOfHanoi } from "./screensavers/tower-of-hanoi.js";
@@ -37,6 +38,7 @@ export const screensavers: ScreensaverModule[] = [
   maze,
   mystify,
   pipes,
+  platformer,
   ripples,
   starfield,
   towerOfHanoi,
