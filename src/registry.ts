@@ -1,3 +1,4 @@
+import { antColony } from "./screensavers/ant-colony.js";
 import { aquarium } from "./screensavers/aquarium.js";
 import { auroraBorealis } from "./screensavers/aurora-borealis.js";
 import { bonsai } from "./screensavers/bonsai.js";
@@ -22,6 +23,7 @@ import { tunnel } from "./screensavers/tunnel.js";
 import type { ScreensaverModule } from "./types.js";
 
 export const screensavers: ScreensaverModule[] = [
+  antColony,
   aquarium,
   auroraBorealis,
   bonsai,
