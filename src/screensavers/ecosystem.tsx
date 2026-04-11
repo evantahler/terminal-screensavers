@@ -53,89 +53,113 @@ function createState(width: number, height: number): EcoState {
   return { grid, organisms, width, height, generation: 0 };
 }
 
-function shuffle<T>(arr: T[]): T[] {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
+// Reusable neighbor buffer to avoid allocations
+const _nbuf: [number, number][] = [
+  [0, 0],
+  [0, 0],
+  [0, 0],
+  [0, 0],
+];
 
-function getNeighbors(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-): [number, number][] {
-  const dirs: [number, number][] = [
-    [0, -1],
-    [0, 1],
-    [-1, 0],
-    [1, 0],
-  ];
-  const result: [number, number][] = [];
-  for (const [dx, dy] of dirs) {
-    const nx = x + dx;
-    const ny = y + dy;
-    if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
-      result.push([nx, ny]);
-    }
+/** Write valid neighbors into _nbuf, return count. Shuffled in-place. */
+function fillNeighbors(x: number, y: number, w: number, h: number): number {
+  let n = 0;
+  if (y > 0) {
+    _nbuf[n][0] = x;
+    _nbuf[n][1] = y - 1;
+    n++;
   }
-  return result;
+  if (y < h - 1) {
+    _nbuf[n][0] = x;
+    _nbuf[n][1] = y + 1;
+    n++;
+  }
+  if (x > 0) {
+    _nbuf[n][0] = x - 1;
+    _nbuf[n][1] = y;
+    n++;
+  }
+  if (x < w - 1) {
+    _nbuf[n][0] = x + 1;
+    _nbuf[n][1] = y;
+    n++;
+  }
+  // Fisher-Yates shuffle in place
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tx = _nbuf[i][0];
+    const ty = _nbuf[i][1];
+    _nbuf[i][0] = _nbuf[j][0];
+    _nbuf[i][1] = _nbuf[j][1];
+    _nbuf[j][0] = tx;
+    _nbuf[j][1] = ty;
+  }
+  return n;
 }
 
 function step(state: EcoState): void {
   const { grid, organisms, width, height } = state;
 
-  // Build list of all creatures, shuffled for fairness
-  const creatures: [number, number, Cell][] = [];
+  // Build creature list using flat indices, then shuffle
+  const creatureIndices: number[] = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      if (grid[y][x] === Cell.Prey || grid[y][x] === Cell.Predator) {
-        creatures.push([x, y, grid[y][x]]);
+      const c = grid[y][x];
+      if (c === Cell.Prey || c === Cell.Predator) {
+        creatureIndices.push(y * width + x);
       }
     }
   }
-  shuffle(creatures);
+  // Fisher-Yates shuffle
+  for (let i = creatureIndices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = creatureIndices[i];
+    creatureIndices[i] = creatureIndices[j];
+    creatureIndices[j] = tmp;
+  }
 
-  const moved = new Set<string>();
+  // Boolean array for moved tracking — no string allocations
+  const moved = new Uint8Array(width * height);
 
-  for (const [ox, oy, type] of creatures) {
-    // Check if this creature is still alive (may have been eaten)
-    if (grid[oy][ox] !== type) continue;
-    if (moved.has(`${ox},${oy}`)) continue;
+  for (const idx of creatureIndices) {
+    const ox = idx % width;
+    const oy = (idx - ox) / width;
+    const type = grid[oy][ox];
+
+    if (type !== Cell.Prey && type !== Cell.Predator) continue;
+    if (moved[idx]) continue;
 
     const org = organisms[oy][ox];
     if (!org) continue;
 
-    const neighbors = shuffle(getNeighbors(ox, oy, width, height));
+    const nCount = fillNeighbors(ox, oy, width, height);
 
-    // Track where this organism ends up
     let cx = ox;
     let cy = oy;
 
     if (type === Cell.Prey) {
-      // Prefer grass cells, then empty
-      const grassCell = neighbors.find(
-        ([nx, ny]) => grid[ny][nx] === Cell.Grass,
-      );
-      const emptyCell = neighbors.find(
-        ([nx, ny]) => grid[ny][nx] === Cell.Empty,
-      );
-      const target = grassCell || emptyCell;
+      // Find grass or empty neighbor
+      let gi = -1;
+      let ei = -1;
+      for (let i = 0; i < nCount; i++) {
+        const c = grid[_nbuf[i][1]][_nbuf[i][0]];
+        if (gi < 0 && c === Cell.Grass) gi = i;
+        if (ei < 0 && c === Cell.Empty) ei = i;
+      }
+      const ti = gi >= 0 ? gi : ei;
 
-      if (target) {
-        const [nx, ny] = target;
+      if (ti >= 0) {
+        const nx = _nbuf[ti][0];
+        const ny = _nbuf[ti][1];
         const ateGrass = grid[ny][nx] === Cell.Grass;
 
         if (org.energy >= PREY_BREED_ENERGY) {
-          // Breed: offspring at new pos, parent stays
           grid[ny][nx] = Cell.Prey;
           organisms[ny][nx] = {
             energy: ateGrass ? PREY_INITIAL_ENERGY + 1 : PREY_INITIAL_ENERGY,
           };
           org.energy = PREY_INITIAL_ENERGY;
-          moved.add(`${nx},${ny}`);
+          moved[ny * width + nx] = 1;
         } else {
           grid[ny][nx] = Cell.Prey;
           organisms[ny][nx] = org;
@@ -144,24 +168,30 @@ function step(state: EcoState): void {
           org.energy += ateGrass ? 2 : -1;
           cx = nx;
           cy = ny;
-          moved.add(`${nx},${ny}`);
+          moved[ny * width + nx] = 1;
         }
       } else {
         org.energy -= 1;
       }
     } else {
-      // Predator tries to eat prey, otherwise moves
-      const preyCell = neighbors.find(([nx, ny]) => grid[ny][nx] === Cell.Prey);
+      // Predator: find prey or empty/grass neighbor
+      let pi = -1;
+      let ei = -1;
+      for (let i = 0; i < nCount; i++) {
+        const c = grid[_nbuf[i][1]][_nbuf[i][0]];
+        if (pi < 0 && c === Cell.Prey) pi = i;
+        if (ei < 0 && (c === Cell.Empty || c === Cell.Grass)) ei = i;
+      }
 
-      if (preyCell) {
-        const [nx, ny] = preyCell;
+      if (pi >= 0) {
+        const nx = _nbuf[pi][0];
+        const ny = _nbuf[pi][1];
 
         if (org.energy >= PREDATOR_BREED_ENERGY) {
-          // Breed: offspring at new pos eating prey, parent stays
           grid[ny][nx] = Cell.Predator;
           organisms[ny][nx] = { energy: PREDATOR_INITIAL_ENERGY + 3 };
           org.energy = PREDATOR_INITIAL_ENERGY;
-          moved.add(`${nx},${ny}`);
+          moved[ny * width + nx] = 1;
         } else {
           grid[ny][nx] = Cell.Predator;
           organisms[ny][nx] = org;
@@ -170,26 +200,21 @@ function step(state: EcoState): void {
           org.energy += 4;
           cx = nx;
           cy = ny;
-          moved.add(`${nx},${ny}`);
+          moved[ny * width + nx] = 1;
         }
+      } else if (ei >= 0) {
+        const nx = _nbuf[ei][0];
+        const ny = _nbuf[ei][1];
+        grid[ny][nx] = Cell.Predator;
+        organisms[ny][nx] = org;
+        grid[oy][ox] = Cell.Empty;
+        organisms[oy][ox] = null;
+        org.energy -= 1;
+        cx = nx;
+        cy = ny;
+        moved[ny * width + nx] = 1;
       } else {
-        const emptyCell = neighbors.find(
-          ([nx, ny]) =>
-            grid[ny][nx] === Cell.Empty || grid[ny][nx] === Cell.Grass,
-        );
-        if (emptyCell) {
-          const [nx, ny] = emptyCell;
-          grid[ny][nx] = Cell.Predator;
-          organisms[ny][nx] = org;
-          grid[oy][ox] = Cell.Empty;
-          organisms[oy][ox] = null;
-          org.energy -= 1;
-          cx = nx;
-          cy = ny;
-          moved.add(`${nx},${ny}`);
-        } else {
-          org.energy -= 1;
-        }
+        org.energy -= 1;
       }
     }
 
@@ -267,35 +292,93 @@ const Ecosystem: React.FC<ScreensaverProps> = ({ columns, rows }) => {
       {state.grid.map((row, y) => {
         // Overlay status on last row
         if (y === state.height - 1) {
-          const chars: React.ReactNode[] = [];
-          for (let x = 0; x < row.length; x++) {
-            if (x < status.length) {
-              const ch = status[x];
-              let color = "#888888";
-              if (ch === "·") color = "#22aa22";
-              else if (ch === "○") color = "#ffffff";
-              else if (ch === "▲") color = "#ff4444";
-              chars.push(
-                <Text key={x} color={color}>
-                  {ch}
-                </Text>,
-              );
+          // Build status segments by grouping consecutive same-color chars
+          const statusSegs: React.ReactNode[] = [];
+          let sRun = "";
+          let sColor = "";
+          let sIdx = 0;
+          for (let x = 0; x < status.length; x++) {
+            const ch = status[x];
+            let color = "#888888";
+            if (ch === "·") color = "#22aa22";
+            else if (ch === "○") color = "#ffffff";
+            else if (ch === "▲") color = "#ff4444";
+            if (color === sColor) {
+              sRun += ch;
             } else {
-              const cell = row[x];
-              if (cell === Cell.Empty) {
-                chars.push(" ");
-              } else {
-                chars.push(
-                  <Text key={x} color={CELL_COLORS[cell]}>
-                    {CELL_CHARS[cell]}
+              if (sRun) {
+                statusSegs.push(
+                  <Text key={sIdx++} color={sColor}>
+                    {sRun}
                   </Text>,
                 );
               }
+              sRun = ch;
+              sColor = color;
+            }
+          }
+          if (sRun) {
+            statusSegs.push(
+              <Text key={sIdx++} color={sColor}>
+                {sRun}
+              </Text>,
+            );
+          }
+          // Render rest of row after status
+          const restSegs: React.ReactNode[] = [];
+          let rRun = "";
+          let rColor = "";
+          let rIdx = 0;
+          for (let x = status.length; x < row.length; x++) {
+            const cell = row[x];
+            const ch = CELL_CHARS[cell];
+            const color = CELL_COLORS[cell];
+            if (cell === Cell.Empty) {
+              if (rColor !== "") {
+                restSegs.push(
+                  <Text key={`s${rIdx++}`} color={rColor}>
+                    {rRun}
+                  </Text>,
+                );
+                rRun = "";
+                rColor = "";
+              }
+              rRun += " ";
+            } else if (color === rColor) {
+              rRun += ch;
+            } else {
+              if (rRun) {
+                if (rColor) {
+                  restSegs.push(
+                    <Text key={`s${rIdx++}`} color={rColor}>
+                      {rRun}
+                    </Text>,
+                  );
+                } else {
+                  restSegs.push(rRun);
+                }
+              }
+              rRun = ch;
+              rColor = color;
+            }
+          }
+          if (rRun) {
+            if (rColor) {
+              restSegs.push(
+                <Text key={`s${rIdx++}`} color={rColor}>
+                  {rRun}
+                </Text>,
+              );
+            } else {
+              restSegs.push(rRun);
             }
           }
           return (
             <Box key={y}>
-              <Text>{chars}</Text>
+              <Text>
+                {statusSegs}
+                {restSegs}
+              </Text>
             </Box>
           );
         }
