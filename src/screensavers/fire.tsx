@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 const Fire: React.FC<ScreensaverProps> = ({ columns, rows }) => {
   const heatBuffer = useRef<number[][]>([]);
@@ -46,31 +47,18 @@ const Fire: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     }
   }
 
-  // Map heat values to characters and colors
-  const getCharAndColor = (heat: number): { char: string; color: string } => {
+  const getCell = (heat: number): SparseCell | null => {
     if (heat > 200) return { char: "█", color: "#ff0000" };
     if (heat > 160) return { char: "▓", color: "#ff4400" };
     if (heat > 120) return { char: "▒", color: "#ff8800" };
     if (heat > 80) return { char: "░", color: "#ffaa00" };
     if (heat > 40) return { char: ".", color: "#ffcc00" };
-    return { char: " ", color: "#000000" };
+    return null;
   };
 
-  // Build output
   return (
     <Box flexDirection="column">
-      {buffer.map((row, y) => (
-        <Box key={y}>
-          {row.map((heat, x) => {
-            const { char, color } = getCharAndColor(heat);
-            return (
-              <Text key={x} color={color}>
-                {char}
-              </Text>
-            );
-          })}
-        </Box>
-      ))}
+      {buffer.map((row, y) => renderSparseRow(row.map(getCell), y))}
     </Box>
   );
 };

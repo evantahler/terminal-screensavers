@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 interface Disc {
   size: number;
@@ -253,19 +254,7 @@ const TowerOfHanoi: React.FC<ScreensaverProps> = ({ columns, rows }) => {
 
   return (
     <Box flexDirection="column">
-      {grid.map((row, rowIndex) => (
-        <Box key={rowIndex}>
-          {row.map((cell, colIndex) =>
-            cell ? (
-              <Text key={colIndex} color={cell.color}>
-                {cell.char}
-              </Text>
-            ) : (
-              <Text key={colIndex}> </Text>
-            ),
-          )}
-        </Box>
-      ))}
+      {grid.map((row, rowIndex) => renderSparseRow(row, rowIndex))}
     </Box>
   );
 };

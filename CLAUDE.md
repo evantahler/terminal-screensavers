@@ -19,6 +19,10 @@
 - **Screensavers:** Each exports a `ScreensaverModule` with name, description, component, and optional fps
 - **Registry:** `src/registry.ts` imports all screensavers for random selection and `--list`
 
+## Rendering Performance
+
+See `RENDERING.md` for tips on keeping screensavers smooth — sparse rendering, freezing static regions, minimizing React elements, etc. Read it before building anything with dense grids or accumulating state.
+
 ## Adding a Screensaver
 
 1. Create `src/screensavers/<name>.tsx` exporting a `ScreensaverModule`

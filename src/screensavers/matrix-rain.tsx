@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 const KATAKANA =
   "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
@@ -38,15 +39,14 @@ function MatrixRain({ columns, rows }: ScreensaverProps) {
     }
   }
 
-  // Build the grid
   const lines: React.ReactNode[] = [];
 
   for (let y = 0; y < rows - 1; y++) {
-    const chars: React.ReactNode[] = [];
+    const row: (SparseCell | null)[] = [];
     for (let x = 0; x < columns; x++) {
       const drop = drops.get(x);
       if (!drop) {
-        chars.push(<Text key={x}> </Text>);
+        row.push(null);
         continue;
       }
 
@@ -54,30 +54,28 @@ function MatrixRain({ columns, rows }: ScreensaverProps) {
       const dist = headY - y;
 
       if (dist < 0 || dist >= drop.length) {
-        chars.push(<Text key={x}> </Text>);
+        row.push(null);
       } else if (dist === 0) {
-        chars.push(
-          <Text key={x} color="white" bold>
-            {drop.chars[y % drop.chars.length]}
-          </Text>,
-        );
+        row.push({
+          char: drop.chars[y % drop.chars.length],
+          color: "white",
+          bold: true,
+        });
       } else if (dist < 3) {
-        chars.push(
-          <Text key={x} color="#00ff00">
-            {drop.chars[y % drop.chars.length]}
-          </Text>,
-        );
+        row.push({
+          char: drop.chars[y % drop.chars.length],
+          color: "#00ff00",
+        });
       } else {
         const brightness = Math.max(0, 1 - dist / drop.length);
         const green = Math.floor(80 + brightness * 175);
-        chars.push(
-          <Text key={x} color={`#00${green.toString(16).padStart(2, "0")}00`}>
-            {drop.chars[y % drop.chars.length]}
-          </Text>,
-        );
+        row.push({
+          char: drop.chars[y % drop.chars.length],
+          color: `#00${green.toString(16).padStart(2, "0")}00`,
+        });
       }
     }
-    lines.push(<Box key={y}>{chars}</Box>);
+    lines.push(renderSparseRow(row, y));
   }
 
   // Advance drops
