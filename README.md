@@ -26,6 +26,7 @@ Press any key to exit.
 | `bubbles` | <img src="screenshots/bubbles.png" alt="bubbles" width="150"> | Rising bubbles that wobble and pop |
 | `digital-clock` | <img src="screenshots/digital-clock.png" alt="digital-clock" width="150"> | Large bouncing digital clock display |
 | `dna-helix` | <img src="screenshots/dna-helix.png" alt="dna-helix" width="150"> | Rotating DNA double helix animation |
+| `ecosystem` | <img src="screenshots/ecosystem.png" alt="ecosystem" width="150"> | Predator-prey simulation with emergent Lotka-Volterra population dynamics |
 | `fire` | <img src="screenshots/fire.png" alt="fire" width="150"> | ASCII fire rising from the bottom of the screen |
 | `fireworks` | <img src="screenshots/fireworks.png" alt="fireworks" width="150"> | Colorful firework rockets and explosions |
 | `game-of-life` | <img src="screenshots/game-of-life.png" alt="game-of-life" width="150"> | Conway's Game of Life cellular automaton |
