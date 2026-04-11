@@ -1,8 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
-import { bounce } from "./utils.js";
+import { type SparseCell, bounce, renderSparseRow } from "./utils.js";
 
 const LOGO = [
   "╔════════════════════╗",
@@ -57,23 +57,18 @@ function BouncingLogo({ columns, rows }: ScreensaverProps) {
   for (let y = 0; y < rows - 1; y++) {
     const logoLineIdx = y - s.y;
     if (logoLineIdx >= 0 && logoLineIdx < LOGO_HEIGHT) {
-      const padding = " ".repeat(Math.max(0, s.x));
-      lines.push(
-        <Box key={y}>
-          <Text>
-            {padding}
-            <Text color={color} bold>
-              {LOGO[logoLineIdx]}
-            </Text>
-          </Text>
-        </Box>,
-      );
+      const sparseRow: (SparseCell | null)[] = new Array(columns).fill(null);
+      const logoLine = LOGO[logoLineIdx];
+      const startX = Math.max(0, Math.round(s.x));
+      for (let i = 0; i < logoLine.length; i++) {
+        const x = startX + i;
+        if (x < columns) {
+          sparseRow[x] = { char: logoLine[i], color, bold: true };
+        }
+      }
+      lines.push(renderSparseRow(sparseRow, y));
     } else {
-      lines.push(
-        <Box key={y}>
-          <Text> </Text>
-        </Box>,
-      );
+      lines.push(renderSparseRow([], y));
     }
   }
 
