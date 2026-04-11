@@ -4,7 +4,6 @@ import meow from "meow";
 import React from "react";
 import App from "./App.js";
 import { screensavers } from "./registry.js";
-import type { ScreensaverModule } from "./types.js";
 
 const cli = meow(
   `
@@ -14,6 +13,11 @@ const cli = meow(
   Options
     --list, -l   List available screensavers
     --fps, -f    Override frames per second
+
+  Controls
+    ←/→          Previous/next screensaver
+    m            Open screensaver menu
+    Any other    Exit
 
   Examples
     $ terminal-screensavers
@@ -43,18 +47,24 @@ if (cli.flags.list) {
 }
 
 const name = cli.input[0];
-let screensaver: ScreensaverModule;
+let initialIndex: number;
 
 if (name) {
-  const found = screensavers.find((s) => s.name === name);
-  if (!found) {
+  const foundIndex = screensavers.findIndex((s) => s.name === name);
+  if (foundIndex === -1) {
     console.error(`Unknown screensaver: "${name}"`);
     console.error("Run with --list to see available screensavers");
     process.exit(1);
   }
-  screensaver = found;
+  initialIndex = foundIndex;
 } else {
-  screensaver = screensavers[Math.floor(Math.random() * screensavers.length)];
+  initialIndex = Math.floor(Math.random() * screensavers.length);
 }
 
-render(<App screensaver={screensaver} fpsOverride={cli.flags.fps} />);
+render(
+  <App
+    screensavers={screensavers}
+    initialIndex={initialIndex}
+    fpsOverride={cli.flags.fps}
+  />,
+);
