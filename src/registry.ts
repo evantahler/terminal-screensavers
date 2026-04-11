@@ -1,4 +1,5 @@
 import { aquarium } from "./screensavers/aquarium.js";
+import { auroraBorealis } from "./screensavers/aurora-borealis.js";
 import { bonsai } from "./screensavers/bonsai.js";
 import { bouncingLogo } from "./screensavers/bouncing-logo.js";
 import { digitalClock } from "./screensavers/digital-clock.js";
@@ -16,6 +17,7 @@ import type { ScreensaverModule } from "./types.js";
 
 export const screensavers: ScreensaverModule[] = [
   aquarium,
+  auroraBorealis,
   bonsai,
   bouncingLogo,
   digitalClock,

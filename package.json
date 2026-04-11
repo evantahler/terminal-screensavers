@@ -1,6 +1,6 @@
 {
   "name": "terminal-screensavers",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Beautiful terminal screensavers — run with npx terminal-screensavers",
   "type": "module",
   "bin": {
