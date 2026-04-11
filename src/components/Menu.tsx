@@ -17,35 +17,58 @@ export function Menu({
   onDismiss,
   rows,
 }: MenuProps) {
-  const [highlightedIndex, setHighlightedIndex] = useState(currentIndex);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [filterText, setFilterText] = useState("");
 
-  const maxVisible = Math.max(1, rows - 6);
+  const filtered = filterText
+    ? screensavers
+        .map((s, i) => ({ screensaver: s, originalIndex: i }))
+        .filter(({ screensaver }) =>
+          screensaver.name.toLowerCase().includes(filterText.toLowerCase()),
+        )
+    : screensavers.map((s, i) => ({ screensaver: s, originalIndex: i }));
+
+  const maxVisible = Math.max(1, rows - (filterText ? 7 : 6));
   const half = Math.floor(maxVisible / 2);
   let scrollStart = highlightedIndex - half;
   if (scrollStart < 0) scrollStart = 0;
-  if (scrollStart + maxVisible > screensavers.length) {
-    scrollStart = Math.max(0, screensavers.length - maxVisible);
+  if (scrollStart + maxVisible > filtered.length) {
+    scrollStart = Math.max(0, filtered.length - maxVisible);
   }
-  const visibleItems = screensavers.slice(
-    scrollStart,
-    scrollStart + maxVisible,
-  );
+  const visibleItems = filtered.slice(scrollStart, scrollStart + maxVisible);
 
   useInput((input, key) => {
     if (key.escape) {
-      onDismiss();
+      if (filterText) {
+        setFilterText("");
+        setHighlightedIndex(0);
+      } else {
+        onDismiss();
+      }
       return;
     }
     if (key.return) {
-      onSelect(highlightedIndex);
+      if (filtered.length > 0) {
+        onSelect(filtered[highlightedIndex].originalIndex);
+      }
       return;
     }
     if (key.upArrow) {
-      setHighlightedIndex((i) => (i > 0 ? i - 1 : screensavers.length - 1));
+      setHighlightedIndex((i) => (i > 0 ? i - 1 : filtered.length - 1));
       return;
     }
     if (key.downArrow) {
-      setHighlightedIndex((i) => (i < screensavers.length - 1 ? i + 1 : 0));
+      setHighlightedIndex((i) => (i < filtered.length - 1 ? i + 1 : 0));
+      return;
+    }
+    if (key.backspace || key.delete) {
+      setFilterText((t) => t.slice(0, -1));
+      setHighlightedIndex(0);
+      return;
+    }
+    if (input && !key.ctrl && !key.meta) {
+      setFilterText((t) => t + input);
+      setHighlightedIndex(0);
       return;
     }
   });
@@ -55,33 +78,46 @@ export function Menu({
       <Text bold color="cyan">
         {"  Select a Screensaver"}
       </Text>
-      <Text dimColor>{"  ↑/↓ navigate  Enter select  Esc back"}</Text>
+      <Text dimColor>
+        {"  ↑/↓ navigate  Enter select  Type to filter  Esc "}
+        {filterText ? "clear" : "back"}
+      </Text>
+      {filterText ? (
+        <Text>
+          {"  Filter: "}
+          <Text color="yellow">{filterText}</Text>
+        </Text>
+      ) : null}
       <Text>{""}</Text>
-      {visibleItems.map((s, i) => {
-        const realIndex = scrollStart + i;
-        const isHighlighted = realIndex === highlightedIndex;
-        const isCurrent = realIndex === currentIndex;
-        const prefix = isHighlighted ? "▸ " : "  ";
-        const suffix = isCurrent ? " (playing)" : "";
+      {filtered.length === 0 ? (
+        <Text dimColor>{"  No matches"}</Text>
+      ) : (
+        visibleItems.map((item, i) => {
+          const realIndex = scrollStart + i;
+          const isHighlighted = realIndex === highlightedIndex;
+          const isCurrent = item.originalIndex === currentIndex;
+          const prefix = isHighlighted ? "▸ " : "  ";
+          const suffix = isCurrent ? " (playing)" : "";
 
-        return (
-          <Text key={s.name}>
-            <Text
-              color={isHighlighted ? "green" : undefined}
-              bold={isHighlighted}
-            >
-              {prefix}
-              {s.name}
+          return (
+            <Text key={item.screensaver.name}>
+              <Text
+                color={isHighlighted ? "green" : undefined}
+                bold={isHighlighted}
+              >
+                {prefix}
+                {item.screensaver.name}
+              </Text>
+              <Text dimColor>
+                {" — "}
+                {item.screensaver.description}
+                {suffix}
+              </Text>
             </Text>
-            <Text dimColor>
-              {" — "}
-              {s.description}
-              {suffix}
-            </Text>
-          </Text>
-        );
-      })}
-      {scrollStart + maxVisible < screensavers.length && (
+          );
+        })
+      )}
+      {scrollStart + maxVisible < filtered.length && (
         <Text dimColor>{"  ↓ more..."}</Text>
       )}
       {scrollStart > 0 && <Text dimColor>{"  ↑ more..."}</Text>}

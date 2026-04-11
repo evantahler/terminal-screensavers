@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { renderSparseRow } from "./utils.js";
 
 interface Rocket {
   x: number;
@@ -40,9 +41,28 @@ const Fireworks: React.FC<ScreensaverProps> = ({
 }) => {
   const rocketsRef = useRef<Rocket[]>([]);
   const particlesRef = useRef<Particle[]>([]);
+  const initializedRef = useRef(false);
+
+  // Seed initial rockets so the screen isn't blank on startup
+  if (!initializedRef.current) {
+    initializedRef.current = true;
+    for (let i = 0; i < 3; i++) {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const targetY = Math.floor(Math.random() * (rows * 0.4)) + 1;
+      const startY = rows - 1;
+      const progress = (i + 1) / 4;
+      rocketsRef.current.push({
+        x: Math.floor(Math.random() * columns),
+        y: startY - (startY - targetY) * progress,
+        targetY,
+        speed: 0.5 + Math.random() * 0.5,
+        color,
+      });
+    }
+  }
 
   // Launch new rockets
-  if (Math.random() < 0.03) {
+  if (Math.random() < 0.08) {
     const color = COLORS[Math.floor(Math.random() * COLORS.length)];
     rocketsRef.current.push({
       x: Math.floor(Math.random() * columns),
@@ -114,12 +134,30 @@ const Fireworks: React.FC<ScreensaverProps> = ({
     () => Array(columns).fill(null),
   );
 
-  // Render rockets
+  // Render rockets with trails
   for (const rocket of rocketsRef.current) {
     const x = Math.floor(rocket.x);
     const y = Math.floor(rocket.y);
     if (y >= 0 && y < rows && x >= 0 && x < columns) {
       grid[y][x] = { char: "|", color: rocket.color };
+    }
+    if (
+      y + 1 >= 0 &&
+      y + 1 < rows &&
+      x >= 0 &&
+      x < columns &&
+      !grid[y + 1][x]
+    ) {
+      grid[y + 1][x] = { char: ":", color: "#888888" };
+    }
+    if (
+      y + 2 >= 0 &&
+      y + 2 < rows &&
+      x >= 0 &&
+      x < columns &&
+      !grid[y + 2][x]
+    ) {
+      grid[y + 2][x] = { char: ".", color: "#555555" };
     }
   }
 
@@ -135,19 +173,7 @@ const Fireworks: React.FC<ScreensaverProps> = ({
   // Render grid to output
   return (
     <Box flexDirection="column">
-      {grid.map((row, rowIndex) => (
-        <Box key={rowIndex}>
-          {row.map((cell, colIndex) =>
-            cell ? (
-              <Text key={colIndex} color={cell.color}>
-                {cell.char}
-              </Text>
-            ) : (
-              <Text key={colIndex}> </Text>
-            ),
-          )}
-        </Box>
-      ))}
+      {grid.map((row, y) => renderSparseRow(row, y))}
     </Box>
   );
 };
