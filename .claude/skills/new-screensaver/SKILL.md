@@ -2,7 +2,7 @@
 name: new-screensaver
 description: Create a new terminal screensaver for this project
 argument-hint: "<screensaver-name> [description or URL]"
-allowed-tools: Bash(bun *), Bash(bun run *), Bash(gh issue view *), Bash(gh pr view *), Read, Write, Edit, Glob, Grep, WebFetch
+allowed-tools: Bash(bun *), Bash(bun run *), Bash(gh issue view *), Bash(gh pr view *), Bash(git branch *), Read, Write, Edit, Glob, Grep, WebFetch
 ---
 
 # New Screensaver
@@ -31,7 +31,19 @@ Parse the name (kebab-case) and any visual/behavioral requirements as before.
 
 In either case, you should end up with a kebab-case name and a clear understanding of what the screensaver should look like and how it should animate.
 
-## 2. Read existing code for reference
+## 2. Verify git branch name
+
+Check that the current git branch name contains the screensaver name (kebab-case). For example, if the screensaver is `my-screensaver`, the branch should contain `my-screensaver` (e.g., `evantahler/my-screensaver` or `add-my-screensaver`).
+
+If the branch name does **not** contain the screensaver name, rename it:
+
+```bash
+git branch -m <current-branch> evantahler/<screensaver-name>
+```
+
+This ensures the branch is identifiable when creating a PR later.
+
+## 3. Read existing code for reference
 
 Before writing any code, read these files to understand the patterns:
 
@@ -40,7 +52,7 @@ Before writing any code, read these files to understand the patterns:
 - `src/screensavers/utils.tsx` — shared utilities (`bounce`, `renderSparseRow`)
 - At least one existing screensaver from `src/screensavers/` as a reference for the animation style needed
 
-## 3. Create the screensaver file
+## 4. Create the screensaver file
 
 Create `src/screensavers/<name>.tsx`. Every screensaver must follow this structure:
 
@@ -86,13 +98,13 @@ export const myScreensaver: ScreensaverModule = {
 - **Looping**: Screensavers should run indefinitely. When a cycle completes (e.g., puzzle solved, pattern fills screen), reset and start a new variation.
 - **Export name**: Use camelCase matching the kebab-case file name (e.g., `tower-of-hanoi.tsx` exports `towerOfHanoi`).
 
-## 4. Register the screensaver
+## 5. Register the screensaver
 
 Edit `src/registry.ts`:
 1. Add an import: `import { myScreensaver } from "./screensavers/my-screensaver.js";`
 2. Add to the `screensavers` array in alphabetical order by name.
 
-## 5. Update the README
+## 6. Update the README
 
 Edit `README.md` and add a row to the screensavers table in alphabetical order:
 
@@ -102,11 +114,11 @@ Edit `README.md` and add a row to the screensavers table in alphabetical order:
 
 Use the description from the `ScreensaverModule` export.
 
-## 6. Bump the version
+## 7. Bump the version
 
 Edit `package.json` and increment the minor version (e.g., `0.4.0` -> `0.5.0`). New screensavers are always a minor bump.
 
-## 7. Verify
+## 8. Verify
 
 Run these commands and fix any issues:
 
@@ -122,7 +134,7 @@ The screensaver must:
 - Render without crashing when run
 - Look visually correct and animate smoothly
 
-## 8. Capture screenshot
+## 9. Capture screenshot
 
 Run the screenshot capture script:
 
