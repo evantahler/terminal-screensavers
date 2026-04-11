@@ -21,6 +21,7 @@ Press any key to exit.
 | `ant-colony` | <img src="screenshots/ant-colony.png" alt="ant-colony" width="150"> | Simulated ants leaving pheromone trails between nest and food |
 | `aquarium` | <img src="screenshots/aquarium.png" alt="aquarium" width="150"> | Fish, bubbles, and seaweed in an ASCII aquarium |
 | `aurora-borealis` | <img src="screenshots/aurora-borealis.png" alt="aurora-borealis" width="150"> | Shimmering curtains of northern lights with twinkling stars |
+| `binary-rain` | <img src="screenshots/binary-rain.png" alt="binary-rain" width="150"> | Falling binary digits with embedded tech words and IP addresses |
 | `boids` | <img src="screenshots/boids.png" alt="boids" width="150"> | Flocking simulation with boids that separate, align, and cohere |
 | `bonsai` | <img src="screenshots/bonsai.png" alt="bonsai" width="150"> | Procedurally growing bonsai tree |
 | `bouncing-logo` | <img src="screenshots/bouncing-logo.png" alt="bouncing-logo" width="150"> | DVD-style bouncing text block with color changes |
@@ -32,6 +33,7 @@ Press any key to exit.
 | `flying-toasters` | <img src="screenshots/flying-toasters.png" alt="flying-toasters" width="150"> | Classic After Dark chrome toasters with flapping wings and toast |
 | `game-of-life` | <img src="screenshots/game-of-life.png" alt="game-of-life" width="150"> | Conway's Game of Life cellular automaton |
 | `gravity-wells` | <img src="screenshots/gravity-wells.png" alt="gravity-wells" width="150"> | Particles orbiting invisible gravity sources with colored trails |
+| `kaleidoscope` | <img src="screenshots/kaleidoscope.png" alt="kaleidoscope" width="150"> | Symmetrical patterns reflected across multiple axes with morphing colors |
 | `lava-lamp` | <img src="screenshots/lava-lamp.png" alt="lava-lamp" width="150"> | Colorful metaball lava lamp blobs |
 | `lightning` | <img src="screenshots/lightning.png" alt="lightning" width="150"> | Procedural lightning bolts striking from storm clouds with bright flashes |
 | `mandelbrot-zoom` | <img src="screenshots/mandelbrot-zoom.png" alt="mandelbrot-zoom" width="150"> | Continuous zoom into the Mandelbrot set with colored ASCII |
@@ -44,8 +46,10 @@ Press any key to exit.
 | `ripples` | <img src="screenshots/ripples.png" alt="ripples" width="150"> | Concentric ripples expanding like raindrops on a pond |
 | `sand-simulation` | <img src="screenshots/sand-simulation.png" alt="sand-simulation" width="150"> | Falling sand particles that pile up and cascade with layered colors |
 | `smoke` | <img src="screenshots/smoke.png" alt="smoke" width="150"> | Wispy smoke rising and dissipating with varying character density |
+| `source-code-scroll` | <img src="screenshots/source-code-scroll.png" alt="source-code-scroll" width="150"> | Syntax-highlighted source code scrolling by like a Hollywood hacking scene |
 | `starfield` | <img src="screenshots/starfield.png" alt="starfield" width="150"> | 3D stars flying toward the viewer |
 | `tetris` | <img src="screenshots/tetris.png" alt="tetris" width="150"> | Auto-playing Tetris with falling pieces, line clears, and scoring |
+| `ticker-tape` | <img src="screenshots/ticker-tape.png" alt="ticker-tape" width="150"> | Scrolling stock tickers and news headlines with color-coded prices |
 | `tower-of-hanoi` | <img src="screenshots/tower-of-hanoi.png" alt="tower-of-hanoi" width="150"> | Animated Tower of Hanoi puzzle solution |
 | `tunnel` | <img src="screenshots/tunnel.png" alt="tunnel" width="150"> | Spiraling tunnel vortex zooming toward the viewer |
 

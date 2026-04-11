@@ -21,7 +21,7 @@
     "url": "https://github.com/evantahler/terminal-screensavers"
   },
   "license": "MIT",
-  "files": ["dist"],
+  "files": ["dist", "src"],
   "dependencies": {
     "ink": "^6.0.0",
     "meow": "^14.0.0",
