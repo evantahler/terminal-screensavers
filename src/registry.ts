@@ -12,6 +12,7 @@ import { fireworks } from "./screensavers/fireworks.js";
 import { flyingToasters } from "./screensavers/flying-toasters.js";
 import { gameOfLife } from "./screensavers/game-of-life.js";
 import { gravityWells } from "./screensavers/gravity-wells.js";
+import { kaleidoscope } from "./screensavers/kaleidoscope.js";
 import { lavaLamp } from "./screensavers/lava-lamp.js";
 import { lightning } from "./screensavers/lightning.js";
 import { mandelbrotZoom } from "./screensavers/mandelbrot-zoom.js";
@@ -43,6 +44,7 @@ export const screensavers: ScreensaverModule[] = [
   flyingToasters,
   gameOfLife,
   gravityWells,
+  kaleidoscope,
   lavaLamp,
   lightning,
   mandelbrotZoom,

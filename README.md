@@ -32,6 +32,7 @@ Press any key to exit.
 | `flying-toasters` | <img src="screenshots/flying-toasters.png" alt="flying-toasters" width="150"> | Classic After Dark chrome toasters with flapping wings and toast |
 | `game-of-life` | <img src="screenshots/game-of-life.png" alt="game-of-life" width="150"> | Conway's Game of Life cellular automaton |
 | `gravity-wells` | <img src="screenshots/gravity-wells.png" alt="gravity-wells" width="150"> | Particles orbiting invisible gravity sources with colored trails |
+| `kaleidoscope` | <img src="screenshots/kaleidoscope.png" alt="kaleidoscope" width="150"> | Symmetrical patterns reflected across multiple axes with morphing colors |
 | `lava-lamp` | <img src="screenshots/lava-lamp.png" alt="lava-lamp" width="150"> | Colorful metaball lava lamp blobs |
 | `lightning` | <img src="screenshots/lightning.png" alt="lightning" width="150"> | Procedural lightning bolts striking from storm clouds with bright flashes |
 | `mandelbrot-zoom` | <img src="screenshots/mandelbrot-zoom.png" alt="mandelbrot-zoom" width="150"> | Continuous zoom into the Mandelbrot set with colored ASCII |
