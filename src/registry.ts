@@ -12,6 +12,7 @@ import { maze } from "./screensavers/maze.js";
 import { mystify } from "./screensavers/mystify.js";
 import { pipes } from "./screensavers/pipes.js";
 import { starfield } from "./screensavers/starfield.js";
+import { towerOfHanoi } from "./screensavers/tower-of-hanoi.js";
 import type { ScreensaverModule } from "./types.js";
 
 export const screensavers: ScreensaverModule[] = [
@@ -29,4 +30,5 @@ export const screensavers: ScreensaverModule[] = [
   mystify,
   pipes,
   starfield,
+  towerOfHanoi,
 ];
