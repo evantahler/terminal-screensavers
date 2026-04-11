@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 interface Branch {
   x: number;
@@ -12,14 +13,9 @@ interface Branch {
   type: "trunk" | "branch" | "leaves";
 }
 
-interface Cell {
-  char: string;
-  color: string;
-}
-
 const Bonsai: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   const state = useRef<{
-    grid: (Cell | null)[][];
+    grid: (SparseCell | null)[][];
     branches: Branch[];
     phase: "growing" | "done";
     doneFrames: number;
@@ -33,7 +29,7 @@ const Bonsai: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   });
 
   const init = () => {
-    const grid: (Cell | null)[][] = Array.from({ length: rows - 1 }, () =>
+    const grid: (SparseCell | null)[][] = Array.from({ length: rows - 1 }, () =>
       Array(columns).fill(null),
     );
     const centerX = Math.floor(columns / 2);
@@ -220,15 +216,7 @@ const Bonsai: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   // Render grid
   return (
     <Box flexDirection="column">
-      {grid.map((row, y) => (
-        <Box key={y}>
-          {row.map((cell, x) => (
-            <Text key={x} color={cell?.color || undefined}>
-              {cell?.char || " "}
-            </Text>
-          ))}
-        </Box>
-      ))}
+      {grid.map((row, y) => renderSparseRow(row, y))}
     </Box>
   );
 };

@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 interface SmokeSource {
   x: number;
@@ -129,32 +130,11 @@ const Smoke: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
 
   const output: React.ReactNode[] = [];
   for (let y = 0; y < height; y++) {
-    const segments: React.ReactNode[] = [];
-    let spaces = "";
-
+    const row: (SparseCell | null)[] = [];
     for (let x = 0; x < columns; x++) {
-      const cell = getCharAndColor(density[y][x]);
-      if (!cell) {
-        spaces += " ";
-      } else {
-        if (spaces) {
-          segments.push(spaces);
-          spaces = "";
-        }
-        segments.push(
-          <Text key={x} color={cell.color}>
-            {cell.char}
-          </Text>,
-        );
-      }
+      row.push(getCharAndColor(density[y][x]));
     }
-    if (spaces) segments.push(spaces);
-
-    output.push(
-      <Box key={y}>
-        <Text>{segments}</Text>
-      </Box>,
-    );
+    output.push(renderSparseRow(row, y));
   }
 
   return <Box flexDirection="column">{output}</Box>;
