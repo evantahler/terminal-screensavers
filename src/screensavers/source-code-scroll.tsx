@@ -611,7 +611,17 @@ function tokenizeLine(line: string, language: string): Token[] {
     i++;
   }
 
-  return tokens;
+  // Merge adjacent tokens with the same color to reduce React element count
+  const merged: Token[] = [];
+  for (const token of tokens) {
+    const last = merged[merged.length - 1];
+    if (last && last.color === token.color) {
+      last.text += token.text;
+    } else {
+      merged.push({ text: token.text, color: token.color });
+    }
+  }
+  return merged;
 }
 
 interface ScrollState {
@@ -625,7 +635,8 @@ interface ScrollState {
   allLines: string[]; // flattened lines from current and future snippets
   allLanguages: string[]; // language per line
   lineNumberWidth: number;
-  initialized: boolean;
+  prevColumns: number;
+  prevRows: number;
 }
 
 function buildLineBuffer(startSnippet: number): {
@@ -661,8 +672,14 @@ function buildLineBuffer(startSnippet: number): {
 function SourceCodeScroll({ columns, rows, frame }: ScreensaverProps) {
   const stateRef = useRef<ScrollState | null>(null);
 
-  if (!stateRef.current) {
-    const startSnippet = Math.floor(Math.random() * CODE_SNIPPETS.length);
+  if (
+    !stateRef.current ||
+    stateRef.current.prevColumns !== columns ||
+    stateRef.current.prevRows !== rows
+  ) {
+    const startSnippet = stateRef.current
+      ? stateRef.current.snippetIndex
+      : Math.floor(Math.random() * CODE_SNIPPETS.length);
     const { lines, languages } = buildLineBuffer(startSnippet);
     stateRef.current = {
       snippetIndex: startSnippet,
@@ -675,7 +692,8 @@ function SourceCodeScroll({ columns, rows, frame }: ScreensaverProps) {
       allLines: lines,
       allLanguages: languages,
       lineNumberWidth: 4,
-      initialized: true,
+      prevColumns: columns,
+      prevRows: rows,
     };
   }
 
