@@ -54,6 +54,7 @@ Before writing any code, read these files to understand the patterns:
 - `src/types.ts` — the `ScreensaverModule` and `ScreensaverProps` interfaces
 - `src/registry.ts` — how screensavers are registered
 - `src/screensavers/utils.tsx` — shared utilities (`bounce`, `renderSparseRow`)
+- `RENDERING.md` — performance tips for dense grids, freezing static regions, sparse rendering
 - At least one existing screensaver from `src/screensavers/` as a reference for the animation style needed
 
 ## 4. Create the screensaver file
