@@ -25,6 +25,10 @@ interface SandState {
   height: number;
   frameCount: number;
   fillCount: number;
+  // Rows at index >= frozenY are completely full and skip physics
+  frozenY: number;
+  // Cached sparse rows for frozen rows (never recomputed)
+  frozenRows: (SparseCell | null)[][];
 }
 
 function createGrid(width: number, height: number): Cell[][] {
@@ -51,6 +55,8 @@ const SandSimulation: React.FC<ScreensaverProps> = ({ columns, rows }) => {
       height,
       frameCount: 0,
       fillCount: 0,
+      frozenY: height,
+      frozenRows: [],
     };
   }
 
@@ -67,11 +73,12 @@ const SandSimulation: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     }
   }
 
-  // Simulate falling — iterate bottom-up so each grain moves once per frame
+  // Simulate falling — iterate bottom-up, skip frozen rows
   // Alternate scan direction each frame to avoid left/right bias
   const leftToRight = state.frameCount % 2 === 0;
+  const simFloor = state.frozenY - 1; // lowest row that still needs physics
 
-  for (let y = height - 2; y >= 0; y--) {
+  for (let y = simFloor - 1; y >= 0; y--) {
     const startX = leftToRight ? 0 : width - 1;
     const endX = leftToRight ? width : -1;
     const stepX = leftToRight ? 1 : -1;
@@ -106,24 +113,41 @@ const SandSimulation: React.FC<ScreensaverProps> = ({ columns, rows }) => {
     }
   }
 
-  // Reset when screen is mostly full
-  const totalCells = width * height;
-  if (state.fillCount > totalCells * 0.85) {
-    state.grid = createGrid(width, height);
-    state.fillCount = 0;
+  // Freeze full rows from the bottom up — they can't change anymore
+  while (state.frozenY > 0) {
+    const checkY = state.frozenY - 1;
+    const rowFull = state.grid[checkY].every((cell) => cell !== 0);
+    if (!rowFull) break;
+    // Cache the rendered sparse row and freeze it
+    state.frozenRows[checkY] = state.grid[checkY].map((cell) => ({
+      char: CHAR,
+      color: SAND_TYPES[cell - 1].color,
+    }));
+    state.frozenY = checkY;
   }
 
-  // Render using sparse rows for performance
-  const sparseGrid: (SparseCell | null)[][] = state.grid.map((row) =>
-    row.map((cell) => {
-      if (cell === 0) return null;
-      return { char: CHAR, color: SAND_TYPES[cell - 1].color };
-    }),
-  );
+  // Reset when active area is too small to be interesting
+  if (state.frozenY <= 2) {
+    state.grid = createGrid(width, height);
+    state.fillCount = 0;
+    state.frozenY = height;
+    state.frozenRows = [];
+  }
 
+  // Render: only build sparse cells for active (non-frozen) rows
   return (
     <Box flexDirection="column">
-      {sparseGrid.map((row, y) => renderSparseRow(row, y))}
+      {state.grid.map((row, y) => {
+        // Use cached render data for frozen rows
+        if (y >= state.frozenY && state.frozenRows[y]) {
+          return renderSparseRow(state.frozenRows[y], y);
+        }
+        const sparseRow: (SparseCell | null)[] = row.map((cell) => {
+          if (cell === 0) return null;
+          return { char: CHAR, color: SAND_TYPES[cell - 1].color };
+        });
+        return renderSparseRow(sparseRow, y);
+      })}
     </Box>
   );
 };
