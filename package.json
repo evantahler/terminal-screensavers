@@ -1,6 +1,6 @@
 {
   "name": "terminal-screensavers",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Beautiful terminal screensavers — run with npx terminal-screensavers",
   "type": "module",
   "bin": {
@@ -13,7 +13,7 @@
     "lint": "biome check src/",
     "format": "biome check --write src/",
     "test": "bun test",
-    "screenshots": "bash scripts/capture-screenshots.sh"
+    "screenshots": "bun scripts/capture-screenshots.ts"
   },
   "keywords": ["terminal", "screensaver", "cli", "ink", "react"],
   "repository": {
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/bun": "^1.3.9",
     "@types/node": "^25.2.3",
     "@types/react": "^19.0.0",
