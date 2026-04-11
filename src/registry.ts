@@ -18,6 +18,7 @@ import { mandelbrotZoom } from "./screensavers/mandelbrot-zoom.js";
 import { matrixRain } from "./screensavers/matrix-rain.js";
 import { maze } from "./screensavers/maze.js";
 import { mystify } from "./screensavers/mystify.js";
+import { perlinNoiseField } from "./screensavers/perlin-noise-field.js";
 import { pipes } from "./screensavers/pipes.js";
 import { platformer } from "./screensavers/platformer.js";
 import { ripples } from "./screensavers/ripples.js";
@@ -50,6 +51,7 @@ export const screensavers: ScreensaverModule[] = [
   matrixRain,
   maze,
   mystify,
+  perlinNoiseField,
   pipes,
   platformer,
   ripples,
