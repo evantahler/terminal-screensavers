@@ -144,6 +144,6 @@ When `columns` or `rows` change, reinitialize state rather than trying to resize
 
 ## Current optimization status
 
-Screensavers already using `renderSparseRow()`: boids, bubbles, fireworks, flying-toasters, gravity-wells, lightning, mandelbrot-zoom, mystify, ripples, sand-simulation, starfield, ticker-tape, tunnel.
+Screensavers already using `renderSparseRow()`: binary-rain, boids, bubbles, fireworks, flying-toasters, gravity-wells, lightning, mandelbrot-zoom, mystify, ripples, sand-simulation, starfield, ticker-tape, tunnel.
 
 Screensavers still using per-cell `<Text>` that should be migrated: ant-colony, aquarium, aurora-borealis, bonsai, dna-helix, fire, lava-lamp, matrix-rain, platformer, tetris, tower-of-hanoi. Smoke reimplements sparse logic inline instead of importing `renderSparseRow()`.
