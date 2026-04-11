@@ -280,7 +280,7 @@ When `columns` or `rows` change, reinitialize state rather than trying to resize
 
 ### Screensavers using `renderSparseRow()`
 
-ant-colony, aquarium, aurora-borealis, binary-rain, boids, bonsai, bubbles, dna-helix, fire, fireworks, flying-toasters, gravity-wells, kaleidoscope, lava-lamp, lightning, mandelbrot-zoom, matrix-rain, maze, mystify, particle-system, perlin-noise-field, pipes, platformer, ripples, sand-simulation, smoke, starfield, tetris, ticker-tape, tower-of-hanoi, tunnel.
+ant-colony, aquarium, aurora-borealis, binary-rain, boids, bonsai, bubbles, dna-helix, fire, fireworks, flying-toasters, gravity-wells, kaleidoscope, lava-lamp, lightning, mandelbrot-zoom, matrix-rain, maze, maze-3d, mystify, particle-system, perlin-noise-field, pipes, platformer, ripples, sand-simulation, smoke, starfield, tetris, ticker-tape, tower-of-hanoi, tunnel.
 
 ### Screensavers not yet using `renderSparseRow()`
 
