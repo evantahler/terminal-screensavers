@@ -29,6 +29,7 @@ Press any key to exit.
 | `dna-helix` | <img src="screenshots/dna-helix.png" alt="dna-helix" width="150"> | Rotating DNA double helix animation |
 | `fire` | <img src="screenshots/fire.png" alt="fire" width="150"> | ASCII fire rising from the bottom of the screen |
 | `fireworks` | <img src="screenshots/fireworks.png" alt="fireworks" width="150"> | Colorful firework rockets and explosions |
+| `flying-toasters` | <img src="screenshots/flying-toasters.png" alt="flying-toasters" width="150"> | Classic After Dark chrome toasters with flapping wings and toast |
 | `game-of-life` | <img src="screenshots/game-of-life.png" alt="game-of-life" width="150"> | Conway's Game of Life cellular automaton |
 | `gravity-wells` | <img src="screenshots/gravity-wells.png" alt="gravity-wells" width="150"> | Particles orbiting invisible gravity sources with colored trails |
 | `lava-lamp` | <img src="screenshots/lava-lamp.png" alt="lava-lamp" width="150"> | Colorful metaball lava lamp blobs |
