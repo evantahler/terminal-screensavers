@@ -2,6 +2,7 @@ import { Box, Text } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { bounce } from "./utils.js";
 
 const DIGITS: Record<string, string[]> = {
   "0": ["█████", "█   █", "█   █", "█   █", "█████"],
@@ -32,21 +33,14 @@ const DigitalClock: React.FC<ScreensaverProps> = ({ columns, rows }) => {
 
   const s = state.current;
 
-  // Update position
-  s.x += s.dx;
-  s.y += s.dy;
+  const bx = bounce(s.x, s.dx, columns - CLOCK_WIDTH);
+  const by = bounce(s.y, s.dy, rows - 1 - CLOCK_HEIGHT);
+  s.x = bx.pos;
+  s.dx = bx.vel;
+  s.y = by.pos;
+  s.dy = by.vel;
 
-  // Bounce horizontally
-  if (s.x <= 0 || s.x + CLOCK_WIDTH >= columns) {
-    s.dx *= -1;
-    s.x = Math.max(0, Math.min(s.x, columns - CLOCK_WIDTH));
-    s.colorIdx = (s.colorIdx + 1) % COLORS.length;
-  }
-
-  // Bounce vertically
-  if (s.y <= 0 || s.y + CLOCK_HEIGHT >= rows - 1) {
-    s.dy *= -1;
-    s.y = Math.max(0, Math.min(s.y, rows - 1 - CLOCK_HEIGHT));
+  if (bx.bounced || by.bounced) {
     s.colorIdx = (s.colorIdx + 1) % COLORS.length;
   }
 

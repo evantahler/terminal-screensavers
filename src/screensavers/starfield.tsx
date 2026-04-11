@@ -2,6 +2,7 @@ import { Box, Text } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { renderSparseRow } from "./utils.js";
 
 interface Star {
   x: number;
@@ -26,13 +27,23 @@ function Starfield({ columns, rows }: ScreensaverProps) {
   const cx = Math.floor(columns / 2);
   const cy = Math.floor(rows / 2);
 
+  const DEPTH_LEVELS: {
+    threshold: number;
+    char: string;
+    color: string;
+    bold?: boolean;
+  }[] = [
+    { threshold: 0.8, char: "@", color: "white", bold: true },
+    { threshold: 0.5, char: "*", color: "#cccccc" },
+    { threshold: 0.2, char: "+", color: "#888888" },
+    { threshold: 0, char: ".", color: "#555555" },
+  ];
+
   // Build grid
-  const grid: string[][] = Array.from({ length: rows - 1 }, () =>
-    Array.from({ length: columns }, () => " "),
-  );
-  const brightness: number[][] = Array.from({ length: rows - 1 }, () =>
-    Array.from({ length: columns }, () => 0),
-  );
+  const grid: (null | { char: string; color: string; bold?: boolean })[][] =
+    Array.from({ length: rows - 1 }, () =>
+      Array.from({ length: columns }, () => null),
+    );
 
   for (let i = 0; i < stars.length; i++) {
     const star = stars[i];
@@ -52,59 +63,17 @@ function Starfield({ columns, rows }: ScreensaverProps) {
     if (sx < 0 || sx >= columns || sy < 0 || sy >= rows - 1) continue;
 
     const depth = 1 - star.z / 100;
-
-    if (depth > 0.8) {
-      grid[sy][sx] = "@";
-      brightness[sy][sx] = 3;
-    } else if (depth > 0.5) {
-      grid[sy][sx] = "*";
-      brightness[sy][sx] = 2;
-    } else if (depth > 0.2) {
-      grid[sy][sx] = "+";
-      brightness[sy][sx] = 1;
-    } else {
-      grid[sy][sx] = ".";
-      brightness[sy][sx] = 0;
-    }
+    const level =
+      DEPTH_LEVELS.find((l) => depth > l.threshold) ??
+      DEPTH_LEVELS[DEPTH_LEVELS.length - 1];
+    grid[sy][sx] = { char: level.char, color: level.color, bold: level.bold };
   }
 
-  const lines = grid.map((row, y) => {
-    // Build row as segments: consecutive spaces grouped, colored chars individual
-    const segments: React.ReactNode[] = [];
-    let spaces = "";
-    for (let x = 0; x < row.length; x++) {
-      if (row[x] === " ") {
-        spaces += " ";
-      } else {
-        if (spaces) {
-          segments.push(spaces);
-          spaces = "";
-        }
-        const b = brightness[y][x];
-        const color =
-          b === 3
-            ? "white"
-            : b === 2
-              ? "#cccccc"
-              : b === 1
-                ? "#888888"
-                : "#555555";
-        segments.push(
-          <Text key={x} color={color} bold={b === 3}>
-            {row[x]}
-          </Text>,
-        );
-      }
-    }
-    if (spaces) segments.push(spaces);
-    return (
-      <Box key={y}>
-        <Text>{segments}</Text>
-      </Box>
-    );
-  });
-
-  return <Box flexDirection="column">{lines}</Box>;
+  return (
+    <Box flexDirection="column">
+      {grid.map((row, y) => renderSparseRow(row, y))}
+    </Box>
+  );
 }
 
 export const starfield: ScreensaverModule = {

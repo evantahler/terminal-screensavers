@@ -2,6 +2,7 @@ import { Box, Text } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { bounce } from "./utils.js";
 
 const LOGO = [
   "╔════════════════════╗",
@@ -37,33 +38,14 @@ function BouncingLogo({ columns, rows }: ScreensaverProps) {
   const maxX = columns - LOGO_WIDTH;
   const maxY = rows - 1 - LOGO_HEIGHT;
 
-  // Move
-  s.x += s.dx;
-  s.y += s.dy;
+  const bx = bounce(s.x, s.dx, maxX);
+  const by = bounce(s.y, s.dy, maxY);
+  s.x = bx.pos;
+  s.dx = bx.vel;
+  s.y = by.pos;
+  s.dy = by.vel;
 
-  let bounced = false;
-
-  if (s.x <= 0) {
-    s.x = 0;
-    s.dx = 1;
-    bounced = true;
-  } else if (s.x >= maxX) {
-    s.x = maxX;
-    s.dx = -1;
-    bounced = true;
-  }
-
-  if (s.y <= 0) {
-    s.y = 0;
-    s.dy = 1;
-    bounced = true;
-  } else if (s.y >= maxY) {
-    s.y = maxY;
-    s.dy = -1;
-    bounced = true;
-  }
-
-  if (bounced) {
+  if (bx.bounced || by.bounced) {
     s.colorIdx = (s.colorIdx + 1) % COLORS.length;
   }
 

@@ -90,7 +90,7 @@ const DNAHelix: React.FC<ScreensaverProps> = ({ columns, rows }) => {
       } else if (x > minX && x < maxX && distance < amplitude * 1.5) {
         // Draw base pair connector
         const progress = (x - minX) / distance;
-        const connector = progress < 0.5 ? "-" : "-";
+        const connector = "-";
         const color = progress < 0.5 ? basePair.color1 : basePair.color2;
         rowChars.push({ char: connector, color });
       } else {
