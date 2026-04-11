@@ -2,12 +2,16 @@
 name: new-screensaver
 description: Create a new terminal screensaver for this project
 argument-hint: "<screensaver-name> [description or URL]"
-allowed-tools: Bash(bun *), Bash(bun run *), Bash(gh issue view *), Bash(gh pr view *), Bash(git branch *), Read, Write, Edit, Glob, Grep, WebFetch
+allowed-tools: Bash(bun *), Bash(bun run *), Bash(gh issue view *), Bash(gh pr view *), Bash(git branch *), Read, Write, Edit, Glob, Grep, WebFetch, ExitPlanMode
 ---
 
 # New Screensaver
 
 Create a new screensaver for the terminal-screensavers project. Follow these steps exactly.
+
+## 0. Exit plan mode
+
+If you are currently in plan mode, exit it now using the `ExitPlanMode` tool before proceeding. You need to be in act mode to create files, edit code, and run commands.
 
 ## 1. Understand the request
 
