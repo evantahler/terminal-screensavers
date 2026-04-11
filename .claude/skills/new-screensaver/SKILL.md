@@ -74,11 +74,21 @@ Edit `src/registry.ts`:
 1. Add an import: `import { myScreensaver } from "./screensavers/my-screensaver.js";`
 2. Add to the `screensavers` array in alphabetical order by name.
 
-## 5. Bump the version
+## 5. Update the README
+
+Edit `README.md` and add a row to the screensavers table in alphabetical order:
+
+```markdown
+| `<name>` | <img src="screenshots/<name>.png" alt="<name>" width="150"> | Short description | FPS |
+```
+
+Use the description and fps from the `ScreensaverModule` export.
+
+## 6. Bump the version
 
 Edit `package.json` and increment the minor version (e.g., `0.4.0` -> `0.5.0`). New screensavers are always a minor bump.
 
-## 6. Verify
+## 7. Verify
 
 Run these commands and fix any issues:
 
@@ -93,6 +103,20 @@ The screensaver must:
 - Pass biome lint/format checks
 - Render without crashing when run
 - Look visually correct and animate smoothly
+
+## 8. Capture screenshot
+
+Run the screenshot capture script:
+
+```bash
+bun run screenshots <screensaver-name>
+```
+
+This renders the screensaver headlessly (no GUI needed) and saves a PNG to `screenshots/`. The script imports the screensaver list from the registry, so no manual list maintenance is needed.
+
+When run without a name, the script only captures screensavers that are missing screenshots. Use `--all` to recapture everything.
+
+Until the screenshot is captured, `bun test` will report a failing test for the missing PNG file.
 
 ## Reference screensavers by complexity
 
