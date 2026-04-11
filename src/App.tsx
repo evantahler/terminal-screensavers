@@ -10,6 +10,7 @@ interface AppProps {
   screensavers: ScreensaverModule[];
   initialIndex: number;
   fpsOverride?: number;
+  startInMenu?: boolean;
 }
 
 function ScreensaverView({
@@ -36,13 +37,14 @@ export default function App({
   screensavers,
   initialIndex,
   fpsOverride,
+  startInMenu,
 }: AppProps) {
   const { exit } = useApp();
   const { columns, rows } = useScreenSize();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [showMenu, setShowMenu] = useState(false);
+  const [showMenu, setShowMenu] = useState(startInMenu ?? false);
 
-  useFullScreen();
+  const ready = useFullScreen();
 
   useInput(
     (input, key) => {
@@ -64,6 +66,10 @@ export default function App({
     },
     { isActive: !showMenu },
   );
+
+  if (!ready) {
+    return null;
+  }
 
   if (showMenu) {
     return (

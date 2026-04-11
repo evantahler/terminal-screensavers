@@ -92,35 +92,57 @@ export function Menu({
       {filtered.length === 0 ? (
         <Text dimColor>{"  No matches"}</Text>
       ) : (
-        visibleItems.map((item, i) => {
-          const realIndex = scrollStart + i;
-          const isHighlighted = realIndex === highlightedIndex;
-          const isCurrent = item.originalIndex === currentIndex;
-          const prefix = isHighlighted ? "▸ " : "  ";
-          const suffix = isCurrent ? " (playing)" : "";
+        <Box flexDirection="row">
+          <Box flexDirection="column" flexGrow={1}>
+            {visibleItems.map((item, i) => {
+              const realIndex = scrollStart + i;
+              const isHighlighted = realIndex === highlightedIndex;
+              const isCurrent = item.originalIndex === currentIndex;
+              const prefix = isHighlighted ? "▸ " : "  ";
+              const suffix = isCurrent ? " (playing)" : "";
 
-          return (
-            <Text key={item.screensaver.name}>
-              <Text
-                color={isHighlighted ? "green" : undefined}
-                bold={isHighlighted}
-              >
-                {prefix}
-                {item.screensaver.name}
-              </Text>
-              <Text dimColor>
-                {" — "}
-                {item.screensaver.description}
-                {suffix}
-              </Text>
-            </Text>
-          );
-        })
+              return (
+                <Text key={item.screensaver.name}>
+                  <Text
+                    color={isHighlighted ? "green" : undefined}
+                    bold={isHighlighted}
+                  >
+                    {prefix}
+                    {item.screensaver.name}
+                  </Text>
+                  <Text dimColor>
+                    {" — "}
+                    {item.screensaver.description}
+                    {suffix}
+                  </Text>
+                </Text>
+              );
+            })}
+          </Box>
+          {filtered.length > maxVisible && (
+            <Box flexDirection="column" marginLeft={1}>
+              {Array.from({ length: visibleItems.length }, (_, i) => {
+                const thumbSize = Math.max(
+                  1,
+                  Math.round(
+                    (maxVisible / filtered.length) * visibleItems.length,
+                  ),
+                );
+                const maxScroll = filtered.length - maxVisible;
+                const thumbStart = Math.round(
+                  (scrollStart / maxScroll) * (visibleItems.length - thumbSize),
+                );
+                const isThumb = i >= thumbStart && i < thumbStart + thumbSize;
+                return (
+                  <Text key={i} dimColor={!isThumb}>
+                    {isThumb ? "█" : "│"}
+                  </Text>
+                );
+              })}
+            </Box>
+          )}
+        </Box>
       )}
-      {scrollStart + maxVisible < filtered.length && (
-        <Text dimColor>{"  ↓ more..."}</Text>
-      )}
-      {scrollStart > 0 && <Text dimColor>{"  ↑ more..."}</Text>}
     </Box>
   );
 }
