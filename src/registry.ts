@@ -28,6 +28,7 @@ import { smoke } from "./screensavers/smoke.js";
 import { sourceCodeScroll } from "./screensavers/source-code-scroll.js";
 import { starfield } from "./screensavers/starfield.js";
 import { tetris } from "./screensavers/tetris.js";
+import { tickerTape } from "./screensavers/ticker-tape.js";
 import { towerOfHanoi } from "./screensavers/tower-of-hanoi.js";
 import { tunnel } from "./screensavers/tunnel.js";
 import type { ScreensaverModule } from "./types.js";
@@ -62,6 +63,7 @@ export const screensavers: ScreensaverModule[] = [
   smoke,
   sourceCodeScroll,
   starfield,
+  tickerTape,
   towerOfHanoi,
   tetris,
   tunnel,
