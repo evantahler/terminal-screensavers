@@ -1,7 +1,8 @@
-import { Box, Text } from "ink";
+import { Box } from "ink";
 import type React from "react";
 import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
+import { type SparseCell, renderSparseRow } from "./utils.js";
 
 const WORDS = [
   "root",
@@ -111,15 +112,14 @@ function BinaryRain({ columns, rows }: ScreensaverProps) {
     }
   }
 
-  // Build the grid
   const lines: React.ReactNode[] = [];
 
   for (let y = 0; y < contentRows; y++) {
-    const chars: React.ReactNode[] = [];
+    const row: (SparseCell | null)[] = [];
     for (let x = 0; x < columns; x++) {
       const drop = drops.get(x);
       if (!drop) {
-        chars.push(<Text key={x}> </Text>);
+        row.push(null);
         continue;
       }
 
@@ -127,40 +127,31 @@ function BinaryRain({ columns, rows }: ScreensaverProps) {
       const dist = headY - y;
 
       if (dist < 0 || dist >= drop.length) {
-        chars.push(<Text key={x}> </Text>);
+        row.push(null);
       } else {
         const ch = drop.chars[y % drop.chars.length];
         const isWordChar = ch !== "0" && ch !== "1";
 
         if (dist === 0) {
-          // Leading bright head
-          chars.push(
-            <Text key={x} color="#ffffff" bold>
-              {ch}
-            </Text>,
-          );
+          row.push({ char: ch, color: "white", bold: true });
         } else if (dist < 3) {
-          // Bright trail
-          chars.push(
-            <Text key={x} color={isWordChar ? "#66ffaa" : "#00ff00"} bold={isWordChar}>
-              {ch}
-            </Text>,
-          );
+          row.push({
+            char: ch,
+            color: isWordChar ? "#66ffaa" : "#00ff00",
+            bold: isWordChar,
+          });
         } else {
-          // Fading trail
           const brightness = Math.max(0, 1 - dist / drop.length);
           const green = Math.floor(60 + brightness * 195);
           const blue = isWordChar ? Math.floor(20 + brightness * 40) : 0;
-          const color = `#00${green.toString(16).padStart(2, "0")}${blue.toString(16).padStart(2, "0")}`;
-          chars.push(
-            <Text key={x} color={color}>
-              {ch}
-            </Text>,
-          );
+          row.push({
+            char: ch,
+            color: `#00${green.toString(16).padStart(2, "0")}${blue.toString(16).padStart(2, "0")}`,
+          });
         }
       }
     }
-    lines.push(<Box key={y}>{chars}</Box>);
+    lines.push(renderSparseRow(row, y));
   }
 
   // Advance drops and mutate characters
