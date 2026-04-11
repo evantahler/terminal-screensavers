@@ -1,8 +1,8 @@
 ---
 name: new-screensaver
 description: Create a new terminal screensaver for this project
-argument-hint: "<screensaver-name> [description of what it should look like]"
-allowed-tools: Bash(bun *), Bash(bun run *), Read, Write, Edit, Glob, Grep
+argument-hint: "<screensaver-name> [description or URL]"
+allowed-tools: Bash(bun *), Bash(bun run *), Bash(gh issue view *), Bash(gh pr view *), Read, Write, Edit, Glob, Grep, WebFetch
 ---
 
 # New Screensaver
@@ -11,7 +11,25 @@ Create a new screensaver for the terminal-screensavers project. Follow these ste
 
 ## 1. Understand the request
 
-The user will provide `$ARGUMENTS` with a screensaver name and optionally a description. Parse the name (kebab-case) and any visual/behavioral requirements.
+The user will provide `$ARGUMENTS` with a screensaver name and optionally a description or a URL.
+
+**If `$ARGUMENTS` contains a URL** (starts with `http://` or `https://`):
+
+For **GitHub issue/PR URLs** (matching `github.com/<owner>/<repo>/issues/<number>` or `.../pull/<number>`):
+1. Use `gh issue view <url>` or `gh pr view <url>` to fetch the content — this is more reliable than WebFetch for GitHub.
+2. Extract the screensaver name, visual/behavioral requirements, and any other details from the issue/PR body.
+
+For **all other URLs**:
+1. Fetch the URL using the `WebFetch` tool to retrieve its content.
+2. The URL may point to a design doc, a blog post, or any page describing the desired screensaver.
+3. Extract from the fetched content: the screensaver name (convert to kebab-case), visual/behavioral requirements, and any other relevant details.
+
+In both cases, if the content does not include a clear screensaver name, derive one from the description or ask the user.
+
+**If `$ARGUMENTS` is just text** (no URL):
+Parse the name (kebab-case) and any visual/behavioral requirements as before.
+
+In either case, you should end up with a kebab-case name and a clear understanding of what the screensaver should look like and how it should animate.
 
 ## 2. Read existing code for reference
 
