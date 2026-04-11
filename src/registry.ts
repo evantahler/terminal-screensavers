@@ -9,6 +9,7 @@ import { dnaHelix } from "./screensavers/dna-helix.js";
 import { fire } from "./screensavers/fire.js";
 import { fireworks } from "./screensavers/fireworks.js";
 import { gameOfLife } from "./screensavers/game-of-life.js";
+import { gravityWells } from "./screensavers/gravity-wells.js";
 import { lavaLamp } from "./screensavers/lava-lamp.js";
 import { mandelbrotZoom } from "./screensavers/mandelbrot-zoom.js";
 import { matrixRain } from "./screensavers/matrix-rain.js";
@@ -33,6 +34,7 @@ export const screensavers: ScreensaverModule[] = [
   fire,
   fireworks,
   gameOfLife,
+  gravityWells,
   lavaLamp,
   mandelbrotZoom,
   matrixRain,
