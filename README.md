@@ -40,6 +40,7 @@ Press any key to exit.
 | `matrix-rain` | <img src="screenshots/matrix-rain.png" alt="matrix-rain" width="150"> | Falling green katakana and latin characters |
 | `maze` | <img src="screenshots/maze.png" alt="maze" width="150"> | Animated maze generation and solving |
 | `mystify` | <img src="screenshots/mystify.png" alt="mystify" width="150"> | Bouncing geometric shapes like the Windows classic |
+| `particle-system` | <img src="screenshots/particle-system.png" alt="particle-system" width="150"> | Particle emitters with gravity, wind, and multiple modes: fountain, explosion, rain, sparks |
 | `perlin-noise-field` | <img src="screenshots/perlin-noise-field.png" alt="perlin-noise-field" width="150"> | Perlin noise visualized as characters of varying density with color gradients |
 | `pipes` | <img src="screenshots/pipes.png" alt="pipes" width="150"> | Random pipe segments with box-drawing characters |
 | `platformer` | <img src="screenshots/platformer.png" alt="platformer" width="150"> | Procedurally generated 2D platformer with jumping, enemies, and coins |
