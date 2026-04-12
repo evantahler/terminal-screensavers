@@ -49,19 +49,28 @@ function lerpColor(brightness: number): string {
   return COLORS[idx];
 }
 
-const Fireflies: React.FC<ScreensaverProps> = ({
-  columns,
-  rows,
-  frame,
-}) => {
+const Fireflies: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   const height = rows - 1;
-  const count = Math.max(15, Math.min(30, Math.floor((columns * height) / 200)));
+  const count = Math.max(
+    15,
+    Math.min(30, Math.floor((columns * height) / 200)),
+  );
 
-  const stateRef = useRef<{ flies: Firefly[]; prevCols: number; prevRows: number } | null>(null);
+  const stateRef = useRef<{
+    flies: Firefly[];
+    prevCols: number;
+    prevRows: number;
+  } | null>(null);
 
-  if (!stateRef.current || stateRef.current.prevCols !== columns || stateRef.current.prevRows !== height) {
+  if (
+    !stateRef.current ||
+    stateRef.current.prevCols !== columns ||
+    stateRef.current.prevRows !== height
+  ) {
     stateRef.current = {
-      flies: Array.from({ length: count }, () => createFirefly(columns, height)),
+      flies: Array.from({ length: count }, () =>
+        createFirefly(columns, height),
+      ),
       prevCols: columns,
       prevRows: height,
     };
@@ -81,10 +90,22 @@ const Fireflies: React.FC<ScreensaverProps> = ({
     fly.x += fly.vx;
     fly.y += fly.vy;
 
-    if (fly.x < 0) { fly.x = 0; fly.vx = Math.abs(fly.vx); }
-    if (fly.x >= columns) { fly.x = columns - 1; fly.vx = -Math.abs(fly.vx); }
-    if (fly.y < 0) { fly.y = 0; fly.vy = Math.abs(fly.vy); }
-    if (fly.y >= height) { fly.y = height - 1; fly.vy = -Math.abs(fly.vy); }
+    if (fly.x < 0) {
+      fly.x = 0;
+      fly.vx = Math.abs(fly.vx);
+    }
+    if (fly.x >= columns) {
+      fly.x = columns - 1;
+      fly.vx = -Math.abs(fly.vx);
+    }
+    if (fly.y < 0) {
+      fly.y = 0;
+      fly.vy = Math.abs(fly.vy);
+    }
+    if (fly.y >= height) {
+      fly.y = height - 1;
+      fly.vy = -Math.abs(fly.vy);
+    }
   }
 
   const grid: (SparseCell | null)[][] = Array.from({ length: height }, () =>
@@ -92,7 +113,8 @@ const Fireflies: React.FC<ScreensaverProps> = ({
   );
 
   for (const fly of state.flies) {
-    const brightness = (Math.sin(frame * fly.pulseSpeed + fly.phaseOffset) + 1) / 2;
+    const brightness =
+      (Math.sin(frame * fly.pulseSpeed + fly.phaseOffset) + 1) / 2;
 
     if (brightness < 0.15) continue;
 
