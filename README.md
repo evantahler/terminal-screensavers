@@ -29,6 +29,7 @@ Press any key to exit.
 | `digital-clock` | <img src="screenshots/digital-clock.png" alt="digital-clock" width="150"> | Large bouncing digital clock display |
 | `dna-helix` | <img src="screenshots/dna-helix.png" alt="dna-helix" width="150"> | Rotating DNA double helix animation |
 | `fire` | <img src="screenshots/fire.png" alt="fire" width="150"> | ASCII fire rising from the bottom of the screen |
+| `fireflies` | <img src="screenshots/fireflies.png" alt="fireflies" width="150"> | Glowing fireflies drifting and pulsing in the dark |
 | `fireworks` | <img src="screenshots/fireworks.png" alt="fireworks" width="150"> | Colorful firework rockets and explosions |
 | `flying-toasters` | <img src="screenshots/flying-toasters.png" alt="flying-toasters" width="150"> | Classic After Dark chrome toasters with flapping wings and toast |
 | `game-of-life` | <img src="screenshots/game-of-life.png" alt="game-of-life" width="150"> | Conway's Game of Life cellular automaton |
