@@ -24,6 +24,7 @@ import { matrixRain } from "./screensavers/matrix-rain.js";
 import { threeDMaze } from "./screensavers/maze-3d.js";
 import { maze } from "./screensavers/maze.js";
 import { mystify } from "./screensavers/mystify.js";
+import { nyanCat } from "./screensavers/nyan-cat.js";
 import { particleSystem } from "./screensavers/particle-system.js";
 import { perlinNoiseField } from "./screensavers/perlin-noise-field.js";
 import { pipes } from "./screensavers/pipes.js";
@@ -67,6 +68,7 @@ export const screensavers: ScreensaverModule[] = [
   maze,
   threeDMaze,
   mystify,
+  nyanCat,
   particleSystem,
   perlinNoiseField,
   pipes,

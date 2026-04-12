@@ -44,6 +44,7 @@ Press any key to exit.
 | `maze` | <img src="screenshots/maze.png" alt="maze" width="150"> | Animated maze generation and solving |
 | `maze-3d` | <img src="screenshots/maze-3d.png" alt="maze-3d" width="150"> | First-person walk through an endless maze |
 | `mystify` | <img src="screenshots/mystify.png" alt="mystify" width="150"> | Bouncing geometric shapes like the Windows classic |
+| `nyan-cat` | <img src="screenshots/nyan-cat.png" alt="nyan-cat" width="150"> | Pop-tart cat flying through space with a rainbow trail |
 | `particle-system` | <img src="screenshots/particle-system.png" alt="particle-system" width="150"> | Particle emitters with gravity, wind, and multiple modes: fountain, explosion, rain, sparks |
 | `perlin-noise-field` | <img src="screenshots/perlin-noise-field.png" alt="perlin-noise-field" width="150"> | Perlin noise visualized as characters of varying density with color gradients |
 | `pipes` | <img src="screenshots/pipes.png" alt="pipes" width="150"> | Random pipe segments with box-drawing characters |
