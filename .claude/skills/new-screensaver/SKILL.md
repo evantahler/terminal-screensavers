@@ -139,7 +139,7 @@ The screensaver must:
 - Render without crashing when run
 - Look visually correct and animate smoothly
 
-## 9. Capture screenshot
+## 9. Capture and verify screenshot
 
 Run the screenshot capture script:
 
@@ -152,6 +152,20 @@ This renders the screensaver headlessly (no GUI needed) and saves a PNG to `scre
 When run without a name, the script only captures screensavers that are missing screenshots. Use `--all` to recapture everything.
 
 Until the screenshot is captured, `bun test` will report a failing test for the missing PNG file.
+
+**After capturing, read the screenshot image using the Read tool** to visually verify the output:
+
+```
+Read screenshots/<screensaver-name>.png
+```
+
+Check that:
+- The screensaver renders recognizable, correct output (no `undefined`, `NaN`, or garbage text)
+- The shape/pattern matches what the screensaver is supposed to display
+- Characters and colors appear reasonable
+- The output is centered or positioned appropriately on screen
+
+If the screenshot looks wrong, debug and fix the issue before proceeding.
 
 ## Reference screensavers by complexity
 
