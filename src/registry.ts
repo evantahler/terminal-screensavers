@@ -29,6 +29,7 @@ import { ripples } from "./screensavers/ripples.js";
 import { sandSimulation } from "./screensavers/sand-simulation.js";
 import { smoke } from "./screensavers/smoke.js";
 import { sourceCodeScroll } from "./screensavers/source-code-scroll.js";
+import { spaceInvaders } from "./screensavers/space-invaders.js";
 import { starfield } from "./screensavers/starfield.js";
 import { tetris } from "./screensavers/tetris.js";
 import { tickerTape } from "./screensavers/ticker-tape.js";
@@ -67,6 +68,7 @@ export const screensavers: ScreensaverModule[] = [
   ripples,
   sandSimulation,
   smoke,
+  spaceInvaders,
   sourceCodeScroll,
   starfield,
   tickerTape,

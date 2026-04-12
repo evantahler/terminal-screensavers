@@ -49,6 +49,7 @@ Press any key to exit.
 | `sand-simulation` | <img src="screenshots/sand-simulation.png" alt="sand-simulation" width="150"> | Falling sand particles that pile up and cascade with layered colors |
 | `smoke` | <img src="screenshots/smoke.png" alt="smoke" width="150"> | Wispy smoke rising and dissipating with varying character density |
 | `source-code-scroll` | <img src="screenshots/source-code-scroll.png" alt="source-code-scroll" width="150"> | Syntax-highlighted source code scrolling by like a Hollywood hacking scene |
+| `space-invaders` | <img src="screenshots/space-invaders.png" alt="space-invaders" width="150"> | Classic alien formation marching side to side with periodic UFO fly-bys |
 | `starfield` | <img src="screenshots/starfield.png" alt="starfield" width="150"> | 3D stars flying toward the viewer |
 | `tetris` | <img src="screenshots/tetris.png" alt="tetris" width="150"> | Auto-playing Tetris with falling pieces, line clears, and scoring |
 | `ticker-tape` | <img src="screenshots/ticker-tape.png" alt="ticker-tape" width="150"> | Scrolling stock tickers and news headlines with color-coded prices |
