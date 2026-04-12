@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## Runtime
+
+This project uses **bun** exclusively. Never use `npx`, `node`, `npm`, or `tsc` directly — always use `bun run <script>` (e.g., `bun run build`, `bun run lint`, `bun run format`).
+
 ## Commands
 
 - `bun run dev` — Run screensavers directly (no build step needed)
