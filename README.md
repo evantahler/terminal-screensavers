@@ -48,6 +48,7 @@ Press any key to exit.
 | `perlin-noise-field` | <img src="screenshots/perlin-noise-field.png" alt="perlin-noise-field" width="150"> | Perlin noise visualized as characters of varying density with color gradients |
 | `pipes` | <img src="screenshots/pipes.png" alt="pipes" width="150"> | Random pipe segments with box-drawing characters |
 | `platformer` | <img src="screenshots/platformer.png" alt="platformer" width="150"> | Procedurally generated 2D platformer with jumping, enemies, and coins |
+| `pong` | <img src="screenshots/pong.png" alt="pong" width="150"> | Two AI paddles playing an endless game of Pong |
 | `ripples` | <img src="screenshots/ripples.png" alt="ripples" width="150"> | Concentric ripples expanding like raindrops on a pond |
 | `sand-simulation` | <img src="screenshots/sand-simulation.png" alt="sand-simulation" width="150"> | Falling sand particles that pile up and cascade with layered colors |
 | `smoke` | <img src="screenshots/smoke.png" alt="smoke" width="150"> | Wispy smoke rising and dissipating with varying character density |

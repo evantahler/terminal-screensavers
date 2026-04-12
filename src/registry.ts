@@ -28,6 +28,7 @@ import { particleSystem } from "./screensavers/particle-system.js";
 import { perlinNoiseField } from "./screensavers/perlin-noise-field.js";
 import { pipes } from "./screensavers/pipes.js";
 import { platformer } from "./screensavers/platformer.js";
+import { pong } from "./screensavers/pong.js";
 import { ripples } from "./screensavers/ripples.js";
 import { sandSimulation } from "./screensavers/sand-simulation.js";
 import { smoke } from "./screensavers/smoke.js";
@@ -70,6 +71,7 @@ export const screensavers: ScreensaverModule[] = [
   perlinNoiseField,
   pipes,
   platformer,
+  pong,
   ripples,
   sandSimulation,
   smoke,
