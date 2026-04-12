@@ -20,6 +20,7 @@ Press any key to exit.
 |---|---|---|
 | `ant-colony` | <img src="screenshots/ant-colony.png" alt="ant-colony" width="150"> | Simulated ants leaving pheromone trails between nest and food |
 | `aquarium` | <img src="screenshots/aquarium.png" alt="aquarium" width="150"> | Fish, bubbles, and seaweed in an ASCII aquarium |
+| `ascii-donut` | <img src="screenshots/ascii-donut.png" alt="ascii-donut" width="150"> | The famous rotating 3D donut rendered in ASCII |
 | `aurora-borealis` | <img src="screenshots/aurora-borealis.png" alt="aurora-borealis" width="150"> | Shimmering curtains of northern lights with twinkling stars |
 | `binary-rain` | <img src="screenshots/binary-rain.png" alt="binary-rain" width="150"> | Falling binary digits with embedded tech words and IP addresses |
 | `boids` | <img src="screenshots/boids.png" alt="boids" width="150"> | Flocking simulation with boids that separate, align, and cohere |
