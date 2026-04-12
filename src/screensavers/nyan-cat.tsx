@@ -4,51 +4,78 @@ import { useRef } from "react";
 import type { ScreensaverModule, ScreensaverProps } from "../types.js";
 import { type SparseCell, renderSparseRow } from "./utils.js";
 
-// Nyan Cat sprite frames — pop-tart body cat with animated legs
-// Frame 1: legs down
-const CAT_FRAME_1 = [
-  "  ,----.  ",
-  "  |    |  ",
-  " /|    |\\ ",
-  "( |    | )",
-  "  | ◕ ◕|  ",
-  "  | ── |  ",
-  "  '----'  ",
-  "  || ||   ",
+// Sprite defined as a grid of color codes per character
+// ' ' = transparent, letters map to colors
+// g = grey (cat body), p = pink (frosting), t = tan (crust)
+// s = sprinkle, w = white (eyes), k = black (pupils), m = mouth
+
+// Each frame is [charRow, colorRow] pairs
+// The cat faces right: tail on left, poptart center, head right
+
+const SPRITE_CHARS_1 = [
+  "                  ▄▄  ▄▄  ",
+  "  ┌────────────┐ █  ▀▀  █ ",
+  "  │▒▒•▒▒▒•▒▒▒▒│ █ ●  ● █ ",
+  "──│▒▒▒▒•▒▒•▒▒▒│ █  ▽   █ ",
+  "  │▒•▒▒▒▒▒•▒▒▒│ █▄    ▄█ ",
+  "  └────────────┘   ▀▀▀▀   ",
+  "    ██  ██    ██    ▀▀    ",
 ];
 
-// Frame 2: legs tucked
-const CAT_FRAME_2 = [
-  "  ,----.  ",
-  "  |    |  ",
-  " /|    |\\ ",
-  "( |    | )",
-  "  | ◕ ◕|  ",
-  "  | ── |  ",
-  "  '----'  ",
-  "   |  |   ",
+const SPRITE_CHARS_2 = [
+  "                  ▄▄  ▄▄  ",
+  "  ┌────────────┐ █  ▀▀  █ ",
+  "  │▒▒•▒▒▒•▒▒▒▒│ █ ●  ● █ ",
+  "──│▒▒▒▒•▒▒•▒▒▒│ █  ▽   █ ",
+  "  │▒•▒▒▒▒▒•▒▒▒│ █▄    ▄█ ",
+  "  └────────────┘   ▀▀▀▀   ",
+  "     ██ ██ ██     ▀▀     ",
 ];
 
-// Frame 3: legs up
-const CAT_FRAME_3 = [
-  "  ,----.  ",
-  "  |    |  ",
-  " /|    |\\ ",
-  "( |    | )",
-  "  | ◕ ◕|  ",
-  "  | ── |  ",
-  "  '----'  ",
-  "  // \\\\   ",
+const SPRITE_CHARS_3 = [
+  "                  ▄▄  ▄▄  ",
+  "  ┌────────────┐ █  ▀▀  █ ",
+  "  │▒▒•▒▒▒•▒▒▒▒│ █ ●  ● █ ",
+  "══│▒▒▒▒•▒▒•▒▒▒│ █  ▽   █ ",
+  "  │▒•▒▒▒▒▒•▒▒▒│ █▄    ▄█ ",
+  "  └────────────┘   ▀▀▀▀   ",
+  "   ██  ██    ██   ▀▀     ",
 ];
 
-const CAT_FRAMES = [CAT_FRAME_1, CAT_FRAME_2, CAT_FRAME_3, CAT_FRAME_2];
-const CAT_WIDTH = 10;
-const CAT_HEIGHT = CAT_FRAME_1.length;
+const SPRITE_FRAMES = [
+  SPRITE_CHARS_1,
+  SPRITE_CHARS_2,
+  SPRITE_CHARS_3,
+  SPRITE_CHARS_2,
+];
 
-// Pop-tart body color (pinkish/tan)
-const POPTART_COLOR = "#ffaa88";
-// Cat features color
-const CAT_COLOR = "#888888";
+// Color map: same dimensions as sprite chars, maps each char to a color
+// Uses single-char codes: g=grey, p=pink, t=tan, s=sprinkle, w=white, k=black
+const COLOR_MAP = [
+  "                  gg  gg  ",
+  "  tttttttttttttt gg  gg  g ",
+  "  tppspppspppptg gw  w gg ",
+  "ggtppppsppspppttg gm   gg ",
+  "  tpspppppspppttg g    gg ",
+  "  tttttttttttttt   gggg   ",
+  "    gg  gg    gg    gg    ",
+];
+
+const COLORS: Record<string, string> = {
+  g: "#999999", // grey cat
+  p: "#ff88aa", // pink frosting
+  t: "#ddaa66", // tan crust
+  s: "#ff4488", // sprinkle pink
+  w: "#ffffff", // white eyes
+  k: "#222222", // black pupils
+  m: "#ffffff", // mouth
+};
+
+// Sprinkle colors cycle
+const SPRINKLE_COLORS = ["#ff4488", "#44ddff", "#ffff44", "#ff8844", "#88ff44"];
+
+const SPRITE_HEIGHT = SPRITE_CHARS_1.length;
+const SPRITE_WIDTH = Math.max(...SPRITE_CHARS_1.map((r) => [...r].length));
 
 // Rainbow band colors (top to bottom)
 const RAINBOW_COLORS = [
@@ -60,9 +87,8 @@ const RAINBOW_COLORS = [
   "#8833ff", // violet
 ];
 
-// Star characters
-const STAR_CHARS = [".", "*", "+", "·"];
-const STAR_COLOR = "#ffffff";
+// Star characters and brightness levels
+const STAR_CHARS = [".", "✦", "+", "·", "✧"];
 
 interface Star {
   x: number;
@@ -76,13 +102,14 @@ interface State {
   stars: Star[];
   initialized: boolean;
   scroll: number;
+  sprinkleOffset: number;
 }
 
 function spawnStar(columns: number, rows: number, offscreen: boolean): Star {
-  const brightnesses = ["#ffffff", "#aaaaaa", "#666666"];
+  const brightnesses = ["#ffffff", "#bbbbbb", "#777777", "#555555"];
   return {
     x: offscreen
-      ? columns + Math.floor(Math.random() * 20)
+      ? columns + Math.floor(Math.random() * 30)
       : Math.floor(Math.random() * columns),
     y: Math.floor(Math.random() * rows),
     speed: 0.3 + Math.random() * 0.7,
@@ -97,6 +124,7 @@ const NyanCat: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
     stars: [],
     initialized: false,
     scroll: 0,
+    sprinkleOffset: 0,
   });
 
   const state = stateRef.current;
@@ -104,24 +132,21 @@ const NyanCat: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   // Initialize stars
   if (!state.initialized) {
     state.initialized = true;
-    const starCount = Math.max(
-      10,
-      Math.floor((columns * contentRows) / 80),
-    );
+    const starCount = Math.max(15, Math.floor((columns * contentRows) / 60));
     for (let i = 0; i < starCount; i++) {
       state.stars.push(spawnStar(columns, contentRows, false));
     }
   }
 
-  // Update scroll
   state.scroll += 1;
+  state.sprinkleOffset = Math.floor(frame / 8) % SPRINKLE_COLORS.length;
 
   // Update stars — move them left
   for (const star of state.stars) {
     star.x -= star.speed;
   }
 
-  // Respawn off-screen stars
+  // Respawn off-screen stars (in-place compaction)
   let write = 0;
   for (let read = 0; read < state.stars.length; read++) {
     if (state.stars[read].x > -2) {
@@ -130,30 +155,24 @@ const NyanCat: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   }
   state.stars.length = write;
 
-  const targetStars = Math.max(
-    10,
-    Math.floor((columns * contentRows) / 80),
-  );
+  const targetStars = Math.max(15, Math.floor((columns * contentRows) / 60));
   while (state.stars.length < targetStars) {
     state.stars.push(spawnStar(columns, contentRows, true));
   }
 
-  // Cat position — centered horizontally with bob
-  const catX = Math.floor(columns * 0.55);
-  const bobY = Math.sin(frame * 0.3) * 1.5;
-  const catY = Math.floor(contentRows / 2 - CAT_HEIGHT / 2 + bobY);
+  // Cat position — centered with bob
+  const catX = Math.floor(columns * 0.5 - SPRITE_WIDTH / 2 + 4);
+  const bobY = Math.sin(frame * 0.25) * 1.5;
+  const catY = Math.floor(contentRows / 2 - SPRITE_HEIGHT / 2 + bobY);
 
-  // Select animation frame (cycle through leg frames)
-  const catFrame = CAT_FRAMES[Math.floor(frame / 3) % CAT_FRAMES.length];
+  // Select animation frame
+  const spriteFrame =
+    SPRITE_FRAMES[Math.floor(frame / 4) % SPRITE_FRAMES.length];
 
   // Rainbow trail parameters
-  const rainbowBandHeight = Math.max(
-    1,
-    Math.floor((CAT_HEIGHT - 2) / RAINBOW_COLORS.length),
-  );
-  const rainbowTop = catY + 1; // start just below top of cat
-  const rainbowLength = catX; // trail extends to the left edge
-  const totalRainbowRows = RAINBOW_COLORS.length * rainbowBandHeight;
+  const rainbowBandHeight = 1;
+  const rainbowTop = catY + 1;
+  const rainbowLength = catX + 2; // trail extends to left edge
 
   // Build grid
   const grid: (SparseCell | null)[][] = Array.from(
@@ -173,40 +192,51 @@ const NyanCat: React.FC<ScreensaverProps> = ({ columns, rows, frame }) => {
   // Place rainbow trail — wavy bands
   for (let bandIdx = 0; bandIdx < RAINBOW_COLORS.length; bandIdx++) {
     const color = RAINBOW_COLORS[bandIdx];
-    for (let bh = 0; bh < rainbowBandHeight; bh++) {
-      const gy = rainbowTop + bandIdx * rainbowBandHeight + bh;
-      if (gy < 0 || gy >= contentRows) continue;
-      for (let x = 0; x < rainbowLength; x++) {
-        // Wave effect — offset based on x position and frame
-        const wave = Math.sin((x + state.scroll) * 0.3) * 0.8;
-        const wy = Math.floor(gy + wave);
-        if (wy >= 0 && wy < contentRows && x >= 0 && x < columns) {
-          grid[wy][x] = { char: "█", color };
-        }
+    const gy = rainbowTop + bandIdx * rainbowBandHeight;
+    if (gy < 0 || gy >= contentRows) continue;
+    for (let x = 0; x < rainbowLength; x++) {
+      // Wave effect
+      const wave = Math.sin((x + state.scroll) * 0.25) * 1.2;
+      const wy = Math.floor(gy + wave);
+      if (wy >= 0 && wy < contentRows && x >= 0 && x < columns) {
+        grid[wy][x] = { char: "█", color };
       }
     }
   }
 
-  // Place cat sprite
-  for (let row = 0; row < catFrame.length; row++) {
+  // Place cat sprite with per-character coloring
+  let sprinkleIdx = 0;
+  for (let row = 0; row < spriteFrame.length; row++) {
     const gy = catY + row;
     if (gy < 0 || gy >= contentRows) continue;
-    const chars = [...catFrame[row]];
+    const chars = [...spriteFrame[row]];
+    const colorCodes = COLOR_MAP[row] ? [...COLOR_MAP[row]] : [];
+
     for (let col = 0; col < chars.length; col++) {
       const gx = catX + col;
       if (gx < 0 || gx >= columns) continue;
       const ch = chars[col];
-      if (ch !== " ") {
-        // Color the body vs face features differently
-        const isPoptartBody = ch === "|" || ch === "-" || ch === "'" || ch === "," || ch === "(" || ch === ")";
-        const isCatFeature = ch === "◕" || ch === "─" || ch === "/" || ch === "\\";
-        const color = isCatFeature
-          ? CAT_COLOR
-          : isPoptartBody
-            ? POPTART_COLOR
-            : POPTART_COLOR;
-        grid[gy][gx] = { char: ch, color };
+      if (ch === " ") continue;
+
+      const colorCode = colorCodes[col] || "g";
+      let color: string;
+
+      if (ch === "•") {
+        // Sprinkles get cycling colors
+        color =
+          SPRINKLE_COLORS[
+            (sprinkleIdx + state.sprinkleOffset) % SPRINKLE_COLORS.length
+          ];
+        sprinkleIdx++;
+      } else if (ch === "●") {
+        color = "#ffffff";
+      } else if (ch === "▽") {
+        color = "#ffaaaa";
+      } else {
+        color = COLORS[colorCode] || COLORS.g;
       }
+
+      grid[gy][gx] = { char: ch, color };
     }
   }
 
