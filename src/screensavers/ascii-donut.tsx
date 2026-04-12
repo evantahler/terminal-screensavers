@@ -124,10 +124,7 @@ const AsciiDonut: React.FC<ScreensaverProps> = ({ columns, rows }) => {
         // Skip back-facing surfaces (negative luminance)
         if (L <= 0) continue;
 
-        const luminanceIdx = Math.min(
-          LUMINANCE.length - 1,
-          Math.floor(L * 8),
-        );
+        const luminanceIdx = Math.min(LUMINANCE.length - 1, Math.floor(L * 8));
         const colorIdx = Math.floor(
           ((phi / 6.28) * COLORS.length) % COLORS.length,
         );

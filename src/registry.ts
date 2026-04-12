@@ -1,6 +1,6 @@
-import { asciiDonut } from "./screensavers/ascii-donut.js";
 import { antColony } from "./screensavers/ant-colony.js";
 import { aquarium } from "./screensavers/aquarium.js";
+import { asciiDonut } from "./screensavers/ascii-donut.js";
 import { auroraBorealis } from "./screensavers/aurora-borealis.js";
 import { binaryRain } from "./screensavers/binary-rain.js";
 import { boids } from "./screensavers/boids.js";
