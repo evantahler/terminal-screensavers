@@ -15,6 +15,7 @@ import { gameOfLife } from "./screensavers/game-of-life.js";
 import { gravityWells } from "./screensavers/gravity-wells.js";
 import { kaleidoscope } from "./screensavers/kaleidoscope.js";
 import { lavaLamp } from "./screensavers/lava-lamp.js";
+import { lissajousFigures } from "./screensavers/lissajous-figures.js";
 import { lightning } from "./screensavers/lightning.js";
 import { mandelbrotZoom } from "./screensavers/mandelbrot-zoom.js";
 import { matrixRain } from "./screensavers/matrix-rain.js";
@@ -55,6 +56,7 @@ export const screensavers: ScreensaverModule[] = [
   kaleidoscope,
   lavaLamp,
   lightning,
+  lissajousFigures,
   mandelbrotZoom,
   matrixRain,
   maze,

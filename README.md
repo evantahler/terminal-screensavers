@@ -36,6 +36,7 @@ Press any key to exit.
 | `kaleidoscope` | <img src="screenshots/kaleidoscope.png" alt="kaleidoscope" width="150"> | Symmetrical patterns reflected across multiple axes with morphing colors |
 | `lava-lamp` | <img src="screenshots/lava-lamp.png" alt="lava-lamp" width="150"> | Colorful metaball lava lamp blobs |
 | `lightning` | <img src="screenshots/lightning.png" alt="lightning" width="150"> | Procedural lightning bolts striking from storm clouds with bright flashes |
+| `lissajous-figures` | <img src="screenshots/lissajous-figures.png" alt="lissajous-figures" width="150"> | Oscillating curves tracing Lissajous patterns with morphing frequency ratios |
 | `mandelbrot-zoom` | <img src="screenshots/mandelbrot-zoom.png" alt="mandelbrot-zoom" width="150"> | Continuous zoom into the Mandelbrot set with colored ASCII |
 | `matrix-rain` | <img src="screenshots/matrix-rain.png" alt="matrix-rain" width="150"> | Falling green katakana and latin characters |
 | `maze` | <img src="screenshots/maze.png" alt="maze" width="150"> | Animated maze generation and solving |
